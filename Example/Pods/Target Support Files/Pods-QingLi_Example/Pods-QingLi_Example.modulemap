@@ -1,0 +1,6 @@
+framework module Pods_QingLi_Example {
+  umbrella header "Pods-QingLi_Example-umbrella.h"
+
+  export *
+  module * { export * }
+}

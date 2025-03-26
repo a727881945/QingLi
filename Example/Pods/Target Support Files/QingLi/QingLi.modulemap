@@ -1,0 +1,6 @@
+framework module QingLi {
+  umbrella header "QingLi-umbrella.h"
+
+  export *
+  module * { export * }
+}

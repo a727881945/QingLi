@@ -1,0 +1,22 @@
+{
+  "name": "QingLi",
+  "version": "0.1.0",
+  "summary": "A short description of QingLi.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/wangkejie/QingLi",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "wangkejie": "wangkejie@kuaishou.com"
+  },
+  "source": {
+    "git": "https://github.com/wangkejie/QingLi.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "10.0"
+  },
+  "source_files": "QingLi/**/*"
+}

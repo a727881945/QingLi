@@ -1,0 +1,31 @@
+use_frameworks!
+
+install! 'cocoapods',
+         :generate_multiple_pod_projects => true,
+         :incremental_installation => true,
+         :warn_for_multiple_pod_sources => false,
+         :deterministic_uuids => false
+
+platform :ios, '13.0'
+
+target 'QingLi_Example' do
+  pod 'QingLi', :path => '../'
+  pod 'SSZipArchive'
+  pod 'Bolts'
+  pod 'Masonry'
+  pod 'BlocksKit'
+  pod 'MJExtension'
+  pod 'LookinServer', :configurations => ['Debug']
+  pod 'SDWebImage'
+  pod 'QMUIKit'
+  
+  
+  target 'QingLi_Tests' do
+    inherit! :search_paths
+
+    
+    
+    
+    
+  end
+end
