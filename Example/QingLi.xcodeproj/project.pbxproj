@@ -31,6 +31,10 @@
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 		C0A3BB4EAB17E170F22DFBAE /* Pods_QingLi_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3817416DF8C5CB89F4D30029 /* Pods_QingLi_Example.framework */; };
+		EE12CFCB2D97A629003A4E70 /* KJPhotoSectionHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = EE12CFCA2D97A629003A4E70 /* KJPhotoSectionHeader.m */; };
+		EE12CFCC2D97A629003A4E70 /* KJPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EE12CFC82D97A629003A4E70 /* KJPhotoCell.m */; };
+		EE12D0222D97A9DB003A4E70 /* KJPhotoSimilarityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EE12D0212D97A9DB003A4E70 /* KJPhotoSimilarityManager.m */; };
+		EE12D0782D97B77A003A4E70 /* KJOptimizedDBSCAN.m in Sources */ = {isa = PBXBuildFile; fileRef = EE12D0772D97B77A003A4E70 /* KJOptimizedDBSCAN.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +91,14 @@
 		9FE9E0AE293A1F6C12CF6354 /* Pods-QingLi_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QingLi_Tests.debug.xcconfig"; path = "Target Support Files/Pods-QingLi_Tests/Pods-QingLi_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		BFEA2EB1A2A821CCA1B05142 /* Pods-QingLi_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QingLi_Tests.release.xcconfig"; path = "Target Support Files/Pods-QingLi_Tests/Pods-QingLi_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		D4ED9404822204855F3BAF2B /* Pods_QingLi_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QingLi_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE12CFC72D97A629003A4E70 /* KJPhotoCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJPhotoCell.h; sourceTree = "<group>"; };
+		EE12CFC82D97A629003A4E70 /* KJPhotoCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJPhotoCell.m; sourceTree = "<group>"; };
+		EE12CFC92D97A629003A4E70 /* KJPhotoSectionHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJPhotoSectionHeader.h; sourceTree = "<group>"; };
+		EE12CFCA2D97A629003A4E70 /* KJPhotoSectionHeader.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJPhotoSectionHeader.m; sourceTree = "<group>"; };
+		EE12D0202D97A9DB003A4E70 /* KJPhotoSimilarityManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJPhotoSimilarityManager.h; sourceTree = "<group>"; };
+		EE12D0212D97A9DB003A4E70 /* KJPhotoSimilarityManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJPhotoSimilarityManager.m; sourceTree = "<group>"; };
+		EE12D0762D97B77A003A4E70 /* KJOptimizedDBSCAN.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJOptimizedDBSCAN.h; sourceTree = "<group>"; };
+		EE12D0772D97B77A003A4E70 /* KJOptimizedDBSCAN.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJOptimizedDBSCAN.m; sourceTree = "<group>"; };
 		F14A434A891FAF45E9307CC0 /* QingLi.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = QingLi.podspec; path = ../QingLi.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
@@ -137,6 +149,14 @@
 		0483254E2D199FB200F62578 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				EE12D0202D97A9DB003A4E70 /* KJPhotoSimilarityManager.h */,
+				EE12D0212D97A9DB003A4E70 /* KJPhotoSimilarityManager.m */,
+				EE12D0762D97B77A003A4E70 /* KJOptimizedDBSCAN.h */,
+				EE12D0772D97B77A003A4E70 /* KJOptimizedDBSCAN.m */,
+				EE12CFC72D97A629003A4E70 /* KJPhotoCell.h */,
+				EE12CFC82D97A629003A4E70 /* KJPhotoCell.m */,
+				EE12CFC92D97A629003A4E70 /* KJPhotoSectionHeader.h */,
+				EE12CFCA2D97A629003A4E70 /* KJPhotoSectionHeader.m */,
 				048325532D199FE700F62578 /* KJHomeViewController.h */,
 				048325542D199FE700F62578 /* KJHomeViewController.m */,
 				04714B132D1D0A9D00C66CBC /* KJSmartCleanViewController.h */,
@@ -330,9 +350,6 @@
 				LastUpgradeCheck = 0720;
 				ORGANIZATIONNAME = wangkejie;
 				TargetAttributes = {
-					6003F589195388D20070C39A = {
-						DevelopmentTeam = 4P6A5MCLQN;
-					};
 					6003F5AD195388D20070C39A = {
 						TestTargetID = 6003F589195388D20070C39A;
 					};
@@ -472,6 +489,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				041239602D1A5EF700F171A0 /* KJContactsViewController.m in Sources */,
+				EE12D0222D97A9DB003A4E70 /* KJPhotoSimilarityManager.m in Sources */,
 				048325582D19A04B00F62578 /* KJTools.m in Sources */,
 				048325552D199FE700F62578 /* KJHomeViewController.m in Sources */,
 				04714B152D1D0A9D00C66CBC /* KJSmartCleanViewController.m in Sources */,
@@ -481,6 +499,9 @@
 				041239642D1A5F3900F171A0 /* KJProfileViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				04D64E272D12686A00C3A0F6 /* KJCustomTabBar.m in Sources */,
+				EE12D0782D97B77A003A4E70 /* KJOptimizedDBSCAN.m in Sources */,
+				EE12CFCB2D97A629003A4E70 /* KJPhotoSectionHeader.m in Sources */,
+				EE12CFCC2D97A629003A4E70 /* KJPhotoCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -608,7 +629,7 @@
 			baseConfigurationReference = 10F6F684201175315B5805A1 /* Pods-QingLi_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 4P6A5MCLQN;
+				DEVELOPMENT_TEAM = JH28G98H7K;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QingLi/QingLi-Prefix.pch";
 				INFOPLIST_FILE = "QingLi/QingLi-Info.plist";
@@ -628,7 +649,7 @@
 			baseConfigurationReference = 9D5919551AF22C0501B39CFB /* Pods-QingLi_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 4P6A5MCLQN;
+				DEVELOPMENT_TEAM = JH28G98H7K;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QingLi/QingLi-Prefix.pch";
 				INFOPLIST_FILE = "QingLi/QingLi-Info.plist";

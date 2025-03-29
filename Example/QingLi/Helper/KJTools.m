@@ -10,7 +10,7 @@
 
 CGFloat fitScale(CGFloat size) {
     CGFloat screenWidth = UIScreen.mainScreen.bounds.size.width;
-    return size * screenWidth / 390.0;
+    return size * screenWidth / 375.0;
 }
 
 CGFloat getStatusBarHeight() {
