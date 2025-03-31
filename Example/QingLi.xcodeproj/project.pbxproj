@@ -35,6 +35,9 @@
 		EE12CFCC2D97A629003A4E70 /* KJPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EE12CFC82D97A629003A4E70 /* KJPhotoCell.m */; };
 		EE12D0222D97A9DB003A4E70 /* KJPhotoSimilarityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EE12D0212D97A9DB003A4E70 /* KJPhotoSimilarityManager.m */; };
 		EE12D0782D97B77A003A4E70 /* KJOptimizedDBSCAN.m in Sources */ = {isa = PBXBuildFile; fileRef = EE12D0772D97B77A003A4E70 /* KJOptimizedDBSCAN.m */; };
+		EE61B5692D9A54CA00F03328 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = EE61B5682D9A54CA00F03328 /* Toast */; };
+		EE61B56C2D9A54F600F03328 /* PINCache in Frameworks */ = {isa = PBXBuildFile; productRef = EE61B56B2D9A54F600F03328 /* PINCache */; };
+		EE61B5722D9A5B3300F03328 /* KJCustomPhotoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = EE61B5702D9A5B3300F03328 /* KJCustomPhotoLayout.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -99,6 +102,8 @@
 		EE12D0212D97A9DB003A4E70 /* KJPhotoSimilarityManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJPhotoSimilarityManager.m; sourceTree = "<group>"; };
 		EE12D0762D97B77A003A4E70 /* KJOptimizedDBSCAN.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJOptimizedDBSCAN.h; sourceTree = "<group>"; };
 		EE12D0772D97B77A003A4E70 /* KJOptimizedDBSCAN.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJOptimizedDBSCAN.m; sourceTree = "<group>"; };
+		EE61B56F2D9A5B3300F03328 /* KJCustomPhotoLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJCustomPhotoLayout.h; sourceTree = "<group>"; };
+		EE61B5702D9A5B3300F03328 /* KJCustomPhotoLayout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJCustomPhotoLayout.m; sourceTree = "<group>"; };
 		F14A434A891FAF45E9307CC0 /* QingLi.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = QingLi.podspec; path = ../QingLi.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
@@ -110,6 +115,8 @@
 				6003F590195388D20070C39A /* CoreGraphics.framework in Frameworks */,
 				6003F592195388D20070C39A /* UIKit.framework in Frameworks */,
 				6003F58E195388D20070C39A /* Foundation.framework in Frameworks */,
+				EE61B56C2D9A54F600F03328 /* PINCache in Frameworks */,
+				EE61B5692D9A54CA00F03328 /* Toast in Frameworks */,
 				C0A3BB4EAB17E170F22DFBAE /* Pods_QingLi_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -149,6 +156,7 @@
 		0483254E2D199FB200F62578 /* Home */ = {
 			isa = PBXGroup;
 			children = (
+				EE61B5712D9A5B3300F03328 /* Layout */,
 				EE12D0202D97A9DB003A4E70 /* KJPhotoSimilarityManager.h */,
 				EE12D0212D97A9DB003A4E70 /* KJPhotoSimilarityManager.m */,
 				EE12D0762D97B77A003A4E70 /* KJOptimizedDBSCAN.h */,
@@ -299,6 +307,15 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		EE61B5712D9A5B3300F03328 /* Layout */ = {
+			isa = PBXGroup;
+			children = (
+				EE61B56F2D9A5B3300F03328 /* KJCustomPhotoLayout.h */,
+				EE61B5702D9A5B3300F03328 /* KJCustomPhotoLayout.m */,
+			);
+			path = Layout;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -369,6 +386,8 @@
 				04D64E212D11B85000C3A0F6 /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
 				04D64E222D11B8D000C3A0F6 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				04D64E232D11B92A00C3A0F6 /* XCRemoteSwiftPackageReference "SwiftyStoreKit" */,
+				EE61B5672D9A54CA00F03328 /* XCRemoteSwiftPackageReference "Toast-Swift" */,
+				EE61B56A2D9A54F600F03328 /* XCRemoteSwiftPackageReference "PINCache" */,
 			);
 			productRefGroup = 6003F58B195388D20070C39A /* Products */;
 			projectDirPath = "";
@@ -490,6 +509,7 @@
 			files = (
 				041239602D1A5EF700F171A0 /* KJContactsViewController.m in Sources */,
 				EE12D0222D97A9DB003A4E70 /* KJPhotoSimilarityManager.m in Sources */,
+				EE61B5722D9A5B3300F03328 /* KJCustomPhotoLayout.m in Sources */,
 				048325582D19A04B00F62578 /* KJTools.m in Sources */,
 				048325552D199FE700F62578 /* KJHomeViewController.m in Sources */,
 				04714B152D1D0A9D00C66CBC /* KJSmartCleanViewController.m in Sources */,
@@ -767,7 +787,36 @@
 				minimumVersion = 0.16.4;
 			};
 		};
+		EE61B5672D9A54CA00F03328 /* XCRemoteSwiftPackageReference "Toast-Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/scalessec/Toast-Swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.1.1;
+			};
+		};
+		EE61B56A2D9A54F600F03328 /* XCRemoteSwiftPackageReference "PINCache" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pinterest/PINCache";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.4;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EE61B5682D9A54CA00F03328 /* Toast */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE61B5672D9A54CA00F03328 /* XCRemoteSwiftPackageReference "Toast-Swift" */;
+			productName = Toast;
+		};
+		EE61B56B2D9A54F600F03328 /* PINCache */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EE61B56A2D9A54F600F03328 /* XCRemoteSwiftPackageReference "PINCache" */;
+			productName = PINCache;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 6003F582195388D10070C39A /* Project object */;
 }

@@ -10,10 +10,11 @@
 #import "KJPhotoCell.h"
 #import "KJPhotoSectionHeader.h"
 #import "KJPhotoSimilarityManager.h"
+#import "Layout/KJCustomPhotoLayout.h"
 #import <Photos/Photos.h>
 #import <Vision/Vision.h>
 
-@interface KJSmartCleanViewController () <UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, KJPhotoSectionHeaderDelegate>
+@interface KJSmartCleanViewController () <UICollectionViewDataSource, UICollectionViewDelegate, KJPhotoSectionHeaderDelegate, UIScrollViewDelegate>
 
 @property (nonatomic, strong) NSArray<NSArray<PHAsset *> *> *groupedPhotos;
 @property (nonatomic, strong) NSMutableArray<PHAsset *> *selectedPhotos;
@@ -24,6 +25,8 @@
 @property (nonatomic, strong) UIActivityIndicatorView *loadingIndicator;
 @property (nonatomic, strong) UIProgressView *progressView;
 @property (nonatomic, strong) UILabel *statusLabel;
+@property (nonatomic, strong) UILabel *descriptionLabel;
+@property (nonatomic, strong) UILabel *navTitleLabel; // 自定义标题
 
 @end
 
@@ -36,11 +39,76 @@
     self.selectedIndexPaths = [NSMutableSet set];
     self.selectedPhotos = [NSMutableArray array];
     
+    [self setupNavigationBar];
     [self setupGradientView];
-    [self setupCollectionView];
-    [self setupDeleteButton];
+    [self setupDeleteButton];  // 先初始化底部按钮
+    [self setupCollectionView]; // 再初始化collection
     [self setupLoadingViews];
     [self requestPhotoLibraryAccess];
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    if (self.navigationController) {
+        [self.navigationController setNavigationBarHidden:NO animated:animated];
+        
+        if (@available(iOS 15.0, *)) {
+            // iOS 15及以上版本已在setupNavigationBar中设置，无需额外操作
+        } else {
+            [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+            self.navigationController.navigationBar.shadowImage = [UIImage new];
+        }
+    } else {
+        NSLog(@"警告：SmartCleanViewController 不在导航控制器中，导航栏设置将不生效");
+    }
+}
+
+- (void)setupNavigationBar {
+    // 使用自定义标题视图而不是navigationItem.title
+    self.navTitleLabel = [[UILabel alloc] init];
+    self.navTitleLabel.text = @"Similar Photos";
+    self.navTitleLabel.font = [UIFont boldSystemFontOfSize:17];
+    self.navTitleLabel.textColor = [UIColor blackColor];
+    self.navigationItem.titleView = self.navTitleLabel;
+    
+    // 创建小一号的返回箭头图标
+    UIImage *chevronImage = [UIImage systemImageNamed:@"chevron.left"];
+    UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:18 weight:UIImageSymbolWeightRegular];
+    UIImage *smallerChevronImage = [chevronImage imageByApplyingSymbolConfiguration:config];
+    
+    // 添加左侧返回按钮
+    UIBarButtonItem *backButton = [[UIBarButtonItem alloc] initWithImage:smallerChevronImage
+                                                                   style:UIBarButtonItemStylePlain
+                                                                  target:self
+                                                                  action:@selector(backButtonTapped)];
+    
+    backButton.tintColor = [UIColor blackColor];
+    self.navigationItem.leftBarButtonItem = backButton;
+    
+    // 设置导航栏为透明背景
+    if (@available(iOS 15.0, *)) {
+        UINavigationBarAppearance *appearance = [[UINavigationBarAppearance alloc] init];
+        [appearance configureWithTransparentBackground];
+        appearance.backgroundColor = [UIColor clearColor];
+        appearance.titleTextAttributes = @{NSForegroundColorAttributeName: [UIColor blackColor]};
+        self.navigationController.navigationBar.standardAppearance = appearance;
+        self.navigationController.navigationBar.scrollEdgeAppearance = appearance;
+    } else {
+        self.navigationController.navigationBar.barTintColor = [UIColor clearColor];
+        self.navigationController.navigationBar.backgroundColor = [UIColor clearColor];
+        [self.navigationController.navigationBar setBackgroundImage:[UIImage new] forBarMetrics:UIBarMetricsDefault];
+        self.navigationController.navigationBar.shadowImage = [UIImage new];
+        self.navigationController.navigationBar.translucent = YES;
+    }
+}
+
+- (void)backButtonTapped {
+    if (self.navigationController) {
+        [self.navigationController popViewControllerAnimated:YES];
+    } else {
+        [self dismissViewControllerAnimated:YES completion:nil];
+    }
 }
 
 - (void)setupGradientView {
@@ -57,31 +125,21 @@
     [self.gradientView.layer addSublayer:gradient];
     
     [self.gradientView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.left.right.equalTo(self.view);
-        make.height.mas_equalTo(fitScale(218.5));
+        make.top.equalTo(self.view);
+        make.left.right.equalTo(self.view);
+        make.height.mas_equalTo(fitScale(418.5));
     }];
     
-    // 添加标题
-    UILabel *titleLabel = [[UILabel alloc] init];
-    titleLabel.text = @"Similar Photos";
-    titleLabel.font = [UIFont systemFontOfSize:22 weight:UIFontWeightBold];
-    titleLabel.textColor = [UIColor blackColor];
-    [self.gradientView addSubview:titleLabel];
-    [titleLabel mas_makeConstraints:^(MASConstraintMaker *make) {
+    // 添加说明文字
+    self.descriptionLabel = [[UILabel alloc] init];
+    self.descriptionLabel.text = @"Find and clean duplicate and similar photos";
+    self.descriptionLabel.font = [UIFont systemFontOfSize:14];
+    self.descriptionLabel.textColor = [UIColor darkGrayColor];
+    self.descriptionLabel.textAlignment = NSTextAlignmentCenter;
+    [self.gradientView addSubview:self.descriptionLabel];
+    [self.descriptionLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.equalTo(self.gradientView);
-        make.top.equalTo(self.gradientView).offset(fitScale(50));
-    }];
-    
-    // 添加说明
-    UILabel *descriptionLabel = [[UILabel alloc] init];
-    descriptionLabel.text = @"Find and clean duplicate and similar photos";
-    descriptionLabel.font = [UIFont systemFontOfSize:14];
-    descriptionLabel.textColor = [UIColor darkGrayColor];
-    descriptionLabel.textAlignment = NSTextAlignmentCenter;
-    [self.gradientView addSubview:descriptionLabel];
-    [descriptionLabel mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.centerX.equalTo(self.gradientView);
-        make.top.equalTo(titleLabel.mas_bottom).offset(10);
+        make.top.equalTo(self.mas_topLayoutGuideBottom).offset(fitScale(12));
     }];
     
     // Update gradient frame when view layout changes
@@ -129,9 +187,12 @@
 }
 
 - (void)setupCollectionView {
-    UICollectionViewFlowLayout *layout = [[UICollectionViewFlowLayout alloc] init];
-    layout.minimumInteritemSpacing = fitScale(8);
-    layout.minimumLineSpacing = fitScale(8);
+    // 创建自定义布局
+    KJCustomPhotoLayout *layout = [[KJCustomPhotoLayout alloc] init];
+    layout.largePhotoSize = CGSizeMake(fitScale(133), fitScale(133));
+    layout.smallPhotoSize = CGSizeMake(fitScale(62), fitScale(62));
+    layout.interItemSpacing = fitScale(8);
+    layout.lineSpacing = fitScale(8);
     layout.sectionInset = UIEdgeInsetsMake(fitScale(16), fitScale(16), fitScale(16), fitScale(16));
     layout.headerReferenceSize = CGSizeMake(self.view.frame.size.width, fitScale(40));
     
@@ -146,8 +207,18 @@
     self.collectionView.delegate = self;
     
     [self.view addSubview:self.collectionView];
+    
+    // 需要确保deleteButton已经被添加到视图中并有正确的约束
     [self.collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.edges.equalTo(self.view);
+        make.top.equalTo(self.view);
+        make.left.equalTo(self.view);
+        make.right.equalTo(self.view);
+        // 确保这里使用强引用，避免约束问题
+        if (self.deleteButton) {
+            make.bottom.equalTo(self.deleteButton.mas_top).offset(-fitScale(12));
+        } else {
+            make.bottom.equalTo(self.view.mas_safeAreaLayoutGuideBottom);
+        }
     }];
 }
 
@@ -225,6 +296,9 @@
         self.statusLabel.hidden = YES;
         [self.loadingIndicator stopAnimating];
         
+        // 隐藏描述标签
+        self.descriptionLabel.hidden = YES;
+        
         // 显示集合视图
         self.collectionView.hidden = NO;
         
@@ -290,15 +364,6 @@
         return header;
     }
     return nil;
-}
-
-#pragma mark - UICollectionViewDelegateFlowLayout
-
-- (CGSize)collectionView:(UICollectionView *)collectionView layout:(UICollectionViewLayout *)collectionViewLayout sizeForItemAtIndexPath:(NSIndexPath *)indexPath {
-    if (indexPath.item == 0) {
-        return CGSizeMake(fitScale(133), fitScale(133));
-    }
-    return CGSizeMake(fitScale(62), fitScale(62));
 }
 
 #pragma mark - UICollectionViewDelegate
@@ -392,6 +457,27 @@
             }
         });
     }];
+}
+
+#pragma mark - UIScrollViewDelegate
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+    if (scrollView == self.collectionView) {
+        // 根据滚动位置设置标题透明度
+        CGFloat scrollOffset = scrollView.contentOffset.y;
+        CGFloat threshold = 50.0; // 可以调整此值以改变标题消失的速度
+        
+        if (scrollOffset <= 0) {
+            // 顶部时完全显示
+            self.navTitleLabel.alpha = 1.0;
+        } else if (scrollOffset > threshold) {
+            // 超过阈值时完全隐藏
+            self.navTitleLabel.alpha = 0.0;
+        } else {
+            // 逐渐隐藏
+            self.navTitleLabel.alpha = 1.0 - (scrollOffset / threshold);
+        }
+    }
 }
 
 @end

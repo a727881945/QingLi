@@ -1,5 +1,5 @@
 {
-  "originHash" : "4faafecf79b4147c54386d3591996a3e872c469ca0fe76213f80876caf908baa",
+  "originHash" : "bb33a8861bf355995d099c2cddc32a16a604e197d50f8243d6f8667ea12b4c4f",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -110,6 +110,24 @@
       }
     },
     {
+      "identity" : "pincache",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pinterest/PINCache",
+      "state" : {
+        "revision" : "2fb85948463292c2e824148cf17dc62a4c217a94",
+        "version" : "3.0.4"
+      }
+    },
+    {
+      "identity" : "pinoperation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pinterest/PINOperation.git",
+      "state" : {
+        "revision" : "a74f978733bdaf982758bfa23d70a189f4b4c1b6",
+        "version" : "1.2.3"
+      }
+    },
+    {
       "identity" : "promises",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/promises.git",
@@ -134,6 +152,15 @@
       "state" : {
         "revision" : "9ce911639680113dac9b554d6243e406a9758ebe",
         "version" : "0.16.4"
+      }
+    },
+    {
+      "identity" : "toast-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/scalessec/Toast-Swift",
+      "state" : {
+        "revision" : "ddccd20d6fb718448d9b179c454c561653fda7d5",
+        "version" : "5.1.1"
       }
     }
   ],

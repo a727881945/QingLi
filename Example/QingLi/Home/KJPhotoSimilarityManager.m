@@ -12,6 +12,8 @@
 - (void)cacheFeatureVector:(VNFeaturePrintObservation *)featureVector forAsset:(PHAsset *)asset;
 - (void)removeFeatureVectorForAsset:(PHAsset *)asset;
 - (void)clearCache;
+- (void)cleanupCacheForLibrary:(PHFetchResult *)currentLibraryAssets;
+- (void)preheatCacheWithAssets:(NSArray<PHAsset *> *)assets;
 
 @end
 
@@ -131,6 +133,80 @@
     });
 }
 
+// 添加清理不存在资产的缓存的方法
+- (void)cleanupCacheForLibrary:(PHFetchResult *)currentLibraryAssets {
+    // 创建当前库中资产ID的集合
+    NSMutableSet<NSString *> *currentAssetIds = [NSMutableSet setWithCapacity:currentLibraryAssets.count];
+    [currentLibraryAssets enumerateObjectsUsingBlock:^(PHAsset * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [currentAssetIds addObject:obj.localIdentifier];
+    }];
+    
+    // 由于NSCache不提供枚举方法，我们可以只清理磁盘缓存
+    // 并且在下次访问时按需更新内存缓存
+    
+    // 清理磁盘缓存中不存在的资产
+    dispatch_async(_ioQueue, ^{
+        NSFileManager *fileManager = [NSFileManager defaultManager];
+        NSError *error = nil;
+        NSArray *cacheFiles = [fileManager contentsOfDirectoryAtPath:self->_diskCachePath error:&error];
+        
+        if (error) return;
+        
+        for (NSString *filename in cacheFiles) {
+            // 如果文件对应的资产不在库中，删除该文件
+            if (![currentAssetIds containsObject:filename]) {
+                NSString *filePath = [self->_diskCachePath stringByAppendingPathComponent:filename];
+                [fileManager removeItemAtPath:filePath error:nil];
+                
+                // 同时也从内存缓存中移除（如果存在）
+                [self->_memoryCache removeObjectForKey:filename];
+            }
+        }
+    });
+}
+
+// 预热缓存
+- (void)preheatCacheWithAssets:(NSArray<PHAsset *> *)assets {
+    if (assets.count == 0) return;
+    
+    NSLog(@"预热缓存...");
+    
+    // 计算要预热的资产数量 - 最多预热100张
+    NSInteger preheatCount = MIN(100, assets.count);
+    NSMutableArray<PHAsset *> *assetsToPreload = [NSMutableArray arrayWithCapacity:preheatCount];
+    
+    // 选择最近的照片进行预热
+    NSArray<PHAsset *> *sortedAssets = [assets sortedArrayUsingComparator:^NSComparisonResult(PHAsset * _Nonnull obj1, PHAsset * _Nonnull obj2) {
+        return [obj2.creationDate compare:obj1.creationDate]; // 按创建日期降序
+    }];
+    
+    for (NSInteger i = 0; i < preheatCount; i++) {
+        [assetsToPreload addObject:sortedAssets[i]];
+    }
+    
+    dispatch_async(_ioQueue, ^{
+        for (PHAsset *asset in assetsToPreload) {
+            NSString *key = asset.localIdentifier;
+            NSString *cachePath = [self cachePathForKey:key];
+            
+            // 检查磁盘上是否存在
+            if ([[NSFileManager defaultManager] fileExistsAtPath:cachePath]) {
+                NSData *vectorData = [NSData dataWithContentsOfFile:cachePath];
+                if (vectorData) {
+                    NSError *error = nil;
+                    VNFeaturePrintObservation *featureVector = [NSKeyedUnarchiver unarchivedObjectOfClass:[VNFeaturePrintObservation class]
+                                                                                               fromData:vectorData
+                                                                                                  error:&error];
+                    if (featureVector && !error) {
+                        [self->_memoryCache setObject:featureVector forKey:key];
+                    }
+                }
+            }
+        }
+        NSLog(@"缓存预热完成，已加载 %ld 项", (long)preheatCount);
+    });
+}
+
 @end
 
 // 图像缓存管理
@@ -146,6 +222,8 @@
 
 @implementation KJImageCache {
     NSCache *_memoryCache;
+    NSString *_diskCachePath;
+    dispatch_queue_t _ioQueue;
 }
 
 + (instancetype)sharedCache {
@@ -163,25 +241,89 @@
         _memoryCache = [[NSCache alloc] init];
         _memoryCache.name = @"com.qingli.imagecache";
         _memoryCache.totalCostLimit = 50 * 1024 * 1024; // 50MB缓存限制
+        
+        // 创建磁盘缓存目录
+        NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+        _diskCachePath = [[paths firstObject] stringByAppendingPathComponent:@"ImageCache"];
+        
+        _ioQueue = dispatch_queue_create("com.qingli.imagecache.io", DISPATCH_QUEUE_SERIAL);
+        
+        if (![[NSFileManager defaultManager] fileExistsAtPath:_diskCachePath]) {
+            [[NSFileManager defaultManager] createDirectoryAtPath:_diskCachePath
+                                      withIntermediateDirectories:YES
+                                                       attributes:nil
+                                                            error:nil];
+        }
     }
     return self;
 }
 
+- (NSString *)cachePathForKey:(NSString *)key {
+    return [_diskCachePath stringByAppendingPathComponent:key];
+}
+
 - (UIImage *)imageForKey:(NSString *)key {
-    return [_memoryCache objectForKey:key];
+    // 先查内存缓存
+    UIImage *cachedImage = [_memoryCache objectForKey:key];
+    if (cachedImage) {
+        return cachedImage;
+    }
+    
+    // 再查磁盘缓存
+    NSString *cachePath = [self cachePathForKey:key];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:cachePath]) {
+        @try {
+            NSData *imageData = [NSData dataWithContentsOfFile:cachePath];
+            if (imageData) {
+                UIImage *image = [UIImage imageWithData:imageData];
+                if (image) {
+                    [_memoryCache setObject:image forKey:key];
+                    return image;
+                }
+            }
+        } @catch (NSException *exception) {
+            NSLog(@"从磁盘加载图像时出错: %@", exception);
+        }
+    }
+    
+    return nil;
 }
 
 - (void)cacheImage:(UIImage *)image forKey:(NSString *)key {
     if (!image || !key) return;
+    
+    // 保存到内存缓存
     [_memoryCache setObject:image forKey:key];
+    
+    // 保存到磁盘缓存
+    dispatch_async(_ioQueue, ^{
+        NSString *cachePath = [self cachePathForKey:key];
+        NSData *imageData = UIImagePNGRepresentation(image);
+        if (imageData) {
+            [imageData writeToFile:cachePath atomically:YES];
+        }
+    });
 }
 
 - (void)removeImageForKey:(NSString *)key {
     [_memoryCache removeObjectForKey:key];
+    
+    dispatch_async(_ioQueue, ^{
+        NSString *cachePath = [self cachePathForKey:key];
+        [[NSFileManager defaultManager] removeItemAtPath:cachePath error:nil];
+    });
 }
 
 - (void)clearCache {
     [_memoryCache removeAllObjects];
+    
+    dispatch_async(_ioQueue, ^{
+        [[NSFileManager defaultManager] removeItemAtPath:self->_diskCachePath error:nil];
+        [[NSFileManager defaultManager] createDirectoryAtPath:self->_diskCachePath
+                                  withIntermediateDirectories:YES
+                                                   attributes:nil
+                                                        error:nil];
+    });
 }
 
 @end
@@ -213,9 +355,41 @@
         _processingQueue = dispatch_queue_create("com.qingli.photosimilarity", DISPATCH_QUEUE_CONCURRENT);
         _concurrencySemaphore = dispatch_semaphore_create(4); // 限制最大并发数为4
         _similarityThreshold = 0.5f; // 相似度阈值，值越小要求越严格
-        _targetImageSize = CGSizeMake(100, 100); // 缩略图尺寸
+        _targetImageSize = CGSizeMake(150, 150); // 缩略图尺寸
+        
+        // 延迟应用启动时初始化和维护缓存，等UI显示后再执行
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self initializeAndMaintainCache];
+        });
     }
     return self;
+}
+
+// 在应用启动时初始化和维护缓存
+- (void)initializeAndMaintainCache {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0), ^{
+        // 检查照片库权限
+        PHAuthorizationStatus status = [PHPhotoLibrary authorizationStatus];
+        if (status == PHAuthorizationStatusAuthorized || status == PHAuthorizationStatusLimited) {
+            // 获取当前照片库中的所有照片
+            PHFetchOptions *options = [[PHFetchOptions alloc] init];
+            options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:NO]];
+            PHFetchResult *allPhotos = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeImage options:options];
+            
+            // 清理缓存中不存在的照片
+            [[KJFeaturePrintCache sharedCache] cleanupCacheForLibrary:allPhotos];
+            
+            // 预热缓存
+            NSMutableArray<PHAsset *> *recentPhotos = [NSMutableArray array];
+            [allPhotos enumerateObjectsUsingBlock:^(PHAsset * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                [recentPhotos addObject:obj];
+                if (idx >= 200) *stop = YES; // 最多取200张最近的照片
+            }];
+            
+            // 预热缓存
+            [[KJFeaturePrintCache sharedCache] preheatCacheWithAssets:recentPhotos];
+        }
+    });
 }
 
 #pragma mark - 公共方法
@@ -262,11 +436,23 @@
                     });
                 }
                 
-                // 预过滤分组
-                NSArray<NSArray<PHAsset *> *> *preFilteredGroups = [self preFilterAssets:assets];
-                
-                // 处理预过滤后的分组
-                [self processSimilarityGroups:preFilteredGroups progressBlock:progressBlock completion:completion];
+                // 先检查缓存状态
+                [self checkCacheStatusForAssets:assets completion:^(float cacheRatio) {
+                    NSLog(@"缓存命中率: %.2f%%", cacheRatio * 100);
+                    
+                    // 如果缓存率高，使用快速处理路径
+                    if (cacheRatio > 0.7) {
+                        NSLog(@"使用缓存优化路径...");
+                        [self processCachedAssetsForSimilarity:assets progressBlock:progressBlock completion:completion];
+                    } else {
+                        NSLog(@"使用标准处理路径...");
+                        // 预过滤分组
+                        NSArray<NSArray<PHAsset *> *> *preFilteredGroups = [self preFilterAssets:assets];
+                        
+                        // 处理预过滤后的分组
+                        [self processSimilarityGroups:preFilteredGroups progressBlock:progressBlock completion:completion];
+                    }
+                }];
             }];
         }];
     });
@@ -678,6 +864,186 @@
     
     if (completion) {
         completion(observation);
+    }
+}
+
+// 检查缓存状态
+- (void)checkCacheStatusForAssets:(NSArray<PHAsset *> *)assets completion:(void(^)(float cacheRatio))completion {
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        // 抽样检查缓存状态
+        NSInteger sampleSize = MIN(50, assets.count);
+        NSInteger cachedCount = 0;
+        
+        NSMutableArray<PHAsset *> *sampleAssets = [NSMutableArray arrayWithCapacity:sampleSize];
+        for (NSInteger i = 0; i < sampleSize; i++) {
+            NSInteger randomIndex = arc4random_uniform((uint32_t)assets.count);
+            [sampleAssets addObject:assets[randomIndex]];
+        }
+        
+        for (PHAsset *asset in sampleAssets) {
+            VNFeaturePrintObservation *cachedVector = [[KJFeaturePrintCache sharedCache] featureVectorForAsset:asset];
+            if (cachedVector) {
+                cachedCount++;
+            }
+        }
+        
+        float cacheRatio = (float)cachedCount / (float)sampleSize;
+        
+        if (completion) {
+            completion(cacheRatio);
+        }
+    });
+}
+
+// 使用缓存优化的相似性处理路径
+- (void)processCachedAssetsForSimilarity:(NSArray<PHAsset *> *)assets
+                          progressBlock:(void(^)(float progress))progressBlock
+                             completion:(void(^)(NSArray<NSArray<PHAsset *> *> *similarGroups, NSError * _Nullable error))completion {
+    
+    dispatch_async(self.processingQueue, ^{
+        // 加载所有缓存的特征向量
+        NSMutableArray<VNFeaturePrintObservation *> *featureVectors = [NSMutableArray array];
+        NSMutableArray<PHAsset *> *processedAssets = [NSMutableArray array];
+        NSMutableArray<PHAsset *> *uncachedAssets = [NSMutableArray array];
+        
+        // 首先快速加载所有缓存的向量
+        for (PHAsset *asset in assets) {
+            VNFeaturePrintObservation *cachedVector = [[KJFeaturePrintCache sharedCache] featureVectorForAsset:asset];
+            if (cachedVector) {
+                [featureVectors addObject:cachedVector];
+                [processedAssets addObject:asset];
+            } else {
+                [uncachedAssets addObject:asset];
+            }
+        }
+        
+        // 更新进度
+        if (progressBlock) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                progressBlock(0.3);
+            });
+        }
+        
+        // 处理未缓存的资产
+        if (uncachedAssets.count > 0) {
+            dispatch_group_t group = dispatch_group_create();
+            dispatch_queue_t queue = dispatch_queue_create("com.qingli.featureextraction", DISPATCH_QUEUE_CONCURRENT);
+            
+            __block NSInteger processedCount = 0;
+            NSInteger totalCount = uncachedAssets.count;
+            
+            for (PHAsset *asset in uncachedAssets) {
+                dispatch_group_enter(group);
+                
+                dispatch_semaphore_wait(self.concurrencySemaphore, DISPATCH_TIME_FOREVER);
+                
+                dispatch_async(queue, ^{
+                    // 获取图像
+                    [self requestImageForAsset:asset targetSize:self.targetImageSize contentMode:PHImageContentModeAspectFill completion:^(UIImage * _Nullable image) {
+                        if (image) {
+                            // 提取特征向量
+                            [self extractFeatureVectorFromImage:image completion:^(VNFeaturePrintObservation * _Nullable featureVector) {
+                                if (featureVector) {
+                                    // 缓存特征向量
+                                    [[KJFeaturePrintCache sharedCache] cacheFeatureVector:featureVector forAsset:asset];
+                                    
+                                    // 添加到处理集合
+                                    @synchronized (featureVectors) {
+                                        [featureVectors addObject:featureVector];
+                                        [processedAssets addObject:asset];
+                                    }
+                                }
+                                
+                                processedCount++;
+                                
+                                // 更新进度
+                                if (progressBlock) {
+                                    float progress = 0.3f + ((float)processedCount / (float)totalCount) * 0.4f;
+                                    dispatch_async(dispatch_get_main_queue(), ^{
+                                        progressBlock(progress);
+                                    });
+                                }
+                                
+                                dispatch_semaphore_signal(self.concurrencySemaphore);
+                                dispatch_group_leave(group);
+                            }];
+                        } else {
+                            processedCount++;
+                            dispatch_semaphore_signal(self.concurrencySemaphore);
+                            dispatch_group_leave(group);
+                        }
+                    }];
+                });
+            }
+            
+            dispatch_group_notify(group, self.processingQueue, ^{
+                // 所有特征都已处理，进行聚类
+                [self finishProcessingWithFeatureVectors:featureVectors assets:processedAssets progressBlock:progressBlock completion:completion];
+            });
+        } else {
+            // 如果所有资产都已缓存，直接进行聚类
+            [self finishProcessingWithFeatureVectors:featureVectors assets:processedAssets progressBlock:progressBlock completion:completion];
+        }
+    });
+}
+
+// 完成处理
+- (void)finishProcessingWithFeatureVectors:(NSArray<VNFeaturePrintObservation *> *)featureVectors
+                                   assets:(NSArray<PHAsset *> *)processedAssets
+                            progressBlock:(void(^)(float progress))progressBlock
+                               completion:(void(^)(NSArray<NSArray<PHAsset *> *> *similarGroups, NSError * _Nullable error))completion {
+    
+    // 更新进度
+    if (progressBlock) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            progressBlock(0.8);
+        });
+    }
+    
+    if (featureVectors.count < 2) {
+        // 没有足够的特征向量进行聚类
+        if (completion) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+                completion(@[], nil);
+            });
+        }
+        return;
+    }
+    
+    // 应用DBSCAN聚类
+    KJOptimizedDBSCAN *dbscan = [[KJOptimizedDBSCAN alloc] initWithMinPoints:2 epsilon:self.similarityThreshold];
+    NSArray<NSArray<NSNumber *> *> *clusters = [dbscan fit:featureVectors];
+    
+    // 将聚类结果转换为资产组
+    NSMutableArray<NSArray<PHAsset *> *> *assetClusters = [NSMutableArray array];
+    
+    for (NSArray<NSNumber *> *cluster in clusters) {
+        NSMutableArray<PHAsset *> *assetCluster = [NSMutableArray array];
+        
+        for (NSNumber *index in cluster) {
+            NSInteger idx = [index integerValue];
+            if (idx < processedAssets.count) {
+                [assetCluster addObject:processedAssets[idx]];
+            }
+        }
+        
+        if (assetCluster.count >= 2) {
+            [assetClusters addObject:[assetCluster copy]];
+        }
+    }
+    
+    // 更新进度
+    if (progressBlock) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            progressBlock(1.0);
+        });
+    }
+    
+    // 返回结果
+    if (completion) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            completion([assetClusters copy], nil);
+        });
     }
 }
 
