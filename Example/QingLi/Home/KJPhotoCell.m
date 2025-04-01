@@ -6,6 +6,7 @@
 @property (nonatomic, strong) UIImageView *imageView;
 @property (nonatomic, strong) UIImageView *selectStateImageView;
 @property (nonatomic, strong) UILabel *bestPhotoLabel;
+@property (nonatomic, strong) UIImageView *playIconView;
 
 @end
 
@@ -57,6 +58,26 @@
         make.left.right.bottom.equalTo(self.contentView);
         make.height.mas_equalTo(20);
     }];
+    
+    // 播放图标 - 使用UIImageView替代按钮
+    self.playIconView = [[UIImageView alloc] init];
+    
+    // 使用系统SF Symbols中的更美观的播放图标
+    UIImage *playImage = [UIImage systemImageNamed:@"play.circle.fill"];
+    UIImageSymbolConfiguration *config = [UIImageSymbolConfiguration configurationWithPointSize:24 weight:UIImageSymbolWeightRegular];
+    self.playIconView.image = [playImage imageByApplyingSymbolConfiguration:config];
+    
+    self.playIconView.tintColor = [[UIColor whiteColor] colorWithAlphaComponent:0.8]; // 半透明白色
+    self.playIconView.contentMode = UIViewContentModeScaleAspectFit;
+    self.playIconView.hidden = YES; // 默认隐藏
+    
+    // 添加到cell的右下角，更不容易影响选择
+    self.playIconView.userInteractionEnabled = YES;
+    [self.contentView addSubview:self.playIconView];
+    [self.playIconView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.center.equalTo(self.contentView);
+        make.size.mas_equalTo(CGSizeMake(24, 24));
+    }];
 }
 
 - (void)setAsset:(PHAsset *)asset {
@@ -80,6 +101,18 @@
             });
         }
     }];
+    
+    // 根据资产类型显示不同UI
+    BOOL isVideo = (asset.mediaType == PHAssetMediaTypeVideo);
+    self.playIconView.hidden = !isVideo;
+    
+    // 如果是视频，始终隐藏"Best Photo"标签
+    if (isVideo) {
+        self.bestPhotoLabel.hidden = YES;
+    } else {
+        // 如果是照片，根据isBestPhoto属性决定是否显示
+        self.bestPhotoLabel.hidden = !_isBestPhoto;
+    }
 }
 
 - (void)setIsSelected:(BOOL)isSelected {
@@ -89,7 +122,13 @@
 
 - (void)setIsBestPhoto:(BOOL)isBestPhoto {
     _isBestPhoto = isBestPhoto;
-    self.bestPhotoLabel.hidden = !isBestPhoto;
+    
+    // 只有在资产不是视频时才显示最佳照片标签
+    if (self.asset && self.asset.mediaType != PHAssetMediaTypeVideo) {
+        self.bestPhotoLabel.hidden = !isBestPhoto;
+    } else {
+        self.bestPhotoLabel.hidden = YES; 
+    }
 }
 
 - (void)updateSelectionState {

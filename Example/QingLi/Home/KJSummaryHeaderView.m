@@ -71,7 +71,31 @@
 }
 
 - (void)configureWithCount:(NSInteger)count {
+    // 默认使用照片类型
+    [self configureWithCount:count mediaType:KJMediaTypePhoto];
+}
+
+- (void)configureWithCount:(NSInteger)count mediaType:(KJMediaType)mediaType {
     self.countLabel.text = [NSString stringWithFormat:@"%ld", (long)count];
+    
+    // 根据媒体类型设置不同的图标和描述
+    if (mediaType == KJMediaTypeVideo) {
+        self.iconImageView.image = [UIImage imageNamed:@"Video_icon"];
+        if (!self.iconImageView.image) {
+            // 如果找不到视频图标，尝试使用系统图标
+            self.iconImageView.image = [UIImage systemImageNamed:@"video"];
+            self.iconImageView.tintColor = [UIColor qmui_colorWithHexString:@"#1F2024"];
+        }
+        self.descriptionLabel.text = @"Duplicate & Similar Videos";
+    } else {
+        self.iconImageView.image = [UIImage imageNamed:@"Photos_icon"];
+        if (!self.iconImageView.image) {
+            // 如果找不到照片图标，尝试使用系统图标
+            self.iconImageView.image = [UIImage systemImageNamed:@"photo"];
+            self.iconImageView.tintColor = [UIColor qmui_colorWithHexString:@"#1F2024"];
+        }
+        self.descriptionLabel.text = @"Duplicate & Similar Photos";
+    }
 }
 
 @end 

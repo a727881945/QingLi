@@ -13,6 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface KJSmartCleanViewController : KJBaseViewController
 
+@property (nonatomic, assign, readonly) KJMediaType mediaType;
+
+- (instancetype)initWithMediaType:(KJMediaType)mediaType;
+
 @end
 
 NS_ASSUME_NONNULL_END

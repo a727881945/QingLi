@@ -6,6 +6,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "KJMediaCleanViewController.h" // 导入媒体类型定义
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -17,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSString *)identifier;
 - (void)configureWithCount:(NSInteger)count;
+- (void)configureWithCount:(NSInteger)count mediaType:(KJMediaType)mediaType;
 
 @end
 

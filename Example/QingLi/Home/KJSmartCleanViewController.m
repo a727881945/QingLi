@@ -29,10 +29,28 @@
 @property (nonatomic, strong) UILabel *descriptionLabel;
 @property (nonatomic, strong) UILabel *navTitleLabel; // 自定义标题
 @property (nonatomic, strong) KJSummaryHeaderView *summaryHeaderView; // 摘要视图
+@property (nonatomic, assign, readwrite) KJMediaType mediaType; // 添加媒体类型属性，设置为readwrite
 
 @end
 
 @implementation KJSmartCleanViewController
+
+#pragma mark - 初始化方法
+
+- (instancetype)init {
+    // 默认使用照片类型
+    return [self initWithMediaType:KJMediaTypePhoto];
+}
+
+- (instancetype)initWithMediaType:(KJMediaType)mediaType {
+    self = [super init];
+    if (self) {
+        _mediaType = mediaType;
+    }
+    return self;
+}
+
+#pragma mark - 视图生命周期
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -70,7 +88,14 @@
 - (void)setupNavigationBar {
     // 使用自定义标题视图而不是navigationItem.title
     self.navTitleLabel = [[UILabel alloc] init];
-    self.navTitleLabel.text = @"Similar Photos";
+    
+    // 根据媒体类型设置不同的标题
+    if (self.mediaType == KJMediaTypeVideo) {
+        self.navTitleLabel.text = @"Similar Videos";
+    } else {
+        self.navTitleLabel.text = @"Similar Photos";
+    }
+    
     self.navTitleLabel.font = [UIFont boldSystemFontOfSize:17];
     self.navTitleLabel.textColor = [UIColor blackColor];
     self.navigationItem.titleView = self.navTitleLabel;
@@ -135,7 +160,14 @@
     
     // 添加说明文字
     self.descriptionLabel = [[UILabel alloc] init];
-    self.descriptionLabel.text = @"Find and clean duplicate and similar photos";
+    
+    // 根据媒体类型显示不同的描述文本
+    if (self.mediaType == KJMediaTypeVideo) {
+        self.descriptionLabel.text = @"Find and clean duplicate and similar videos";
+    } else {
+        self.descriptionLabel.text = @"Find and clean duplicate and similar photos";
+    }
+    
     self.descriptionLabel.font = [UIFont systemFontOfSize:14];
     self.descriptionLabel.textColor = [UIColor darkGrayColor];
     self.descriptionLabel.textAlignment = NSTextAlignmentCenter;
@@ -279,16 +311,20 @@
     // 隐藏集合视图
     self.collectionView.hidden = YES;
     
-    // 使用相似照片管理器查找相似照片，明确指定查找普通照片类型
-    [[KJPhotoSimilarityManager sharedManager] findSimilarPhotosWithMediaType:KJMediaTypePhoto progressBlock:^(float progress) {
+    // 根据媒体类型设置适当的状态文本
+    NSString *mediaTypeText = (self.mediaType == KJMediaTypeVideo) ? @"videos" : @"photos";
+    self.statusLabel.text = [NSString stringWithFormat:@"Analyzing %@...", mediaTypeText];
+    
+    // 使用相似媒体管理器查找相似项，使用当前设置的媒体类型
+    [[KJPhotoSimilarityManager sharedManager] findSimilarPhotosWithMediaType:self.mediaType progressBlock:^(float progress) {
         // 更新进度条
         self.progressView.progress = progress;
         
-        // 更新状态文本
+        // 更新状态文本，根据媒体类型使用不同的文本
         if (progress < 0.3) {
-            self.statusLabel.text = @"Analyzing photos...";
+            self.statusLabel.text = [NSString stringWithFormat:@"Analyzing %@...", mediaTypeText];
         } else if (progress < 0.7) {
-            self.statusLabel.text = @"Finding similar photos...";
+            self.statusLabel.text = [NSString stringWithFormat:@"Finding similar %@...", mediaTypeText];
         } else {
             self.statusLabel.text = @"Almost done...";
         }
@@ -302,7 +338,7 @@
         // 隐藏描述标签
         self.descriptionLabel.hidden = YES;
         
-        // 过滤，只保留至少有2张照片的组
+        // 过滤，只保留至少有2张照片/视频的组
         NSMutableArray<NSArray<PHAsset *> *> *filteredGroups = [NSMutableArray array];
         for (NSArray<PHAsset *> *group in similarGroups) {
             if (group.count >= 2) {
@@ -313,23 +349,29 @@
         // 更新数据源
         self.groupedPhotos = filteredGroups;
         
-        // 先更新总照片数量标签
+        // 先更新总照片/视频数量标签
         [self updateTotalPhotosCount];
         
         // 再显示集合视图
         self.collectionView.hidden = NO;
         [self.collectionView reloadData];
         
-        // 没有找到相似照片时提示用户
+        // 没有找到相似项时提示用户
         if (filteredGroups.count == 0) {
-            [self showNoSimilarPhotosAlert];
+            [self showNoSimilarItemsAlert];
         }
     }];
 }
 
-- (void)showNoSimilarPhotosAlert {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"No Similar Photos"
-                                                                   message:@"No similar photos were found in your library."
+- (void)showNoSimilarItemsAlert {
+    // 根据媒体类型显示不同的提示
+    NSString *title = (self.mediaType == KJMediaTypeVideo) ? @"No Similar Videos" : @"No Similar Photos";
+    NSString *message = (self.mediaType == KJMediaTypeVideo) 
+        ? @"No similar videos were found in your library." 
+        : @"No similar photos were found in your library.";
+    
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:title
+                                                                   message:message
                                                             preferredStyle:UIAlertControllerStyleAlert];
     [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
@@ -350,7 +392,8 @@
     
     PHAsset *asset = self.groupedPhotos[indexPath.section][indexPath.item];
     cell.asset = asset;
-    cell.isBestPhoto = indexPath.item == 0;
+    // 只有在照片类型时才考虑 isBestPhoto 属性
+    cell.isBestPhoto = (self.mediaType == KJMediaTypePhoto) && (indexPath.item == 0);
     cell.isSelected = [self.selectedIndexPaths containsObject:indexPath];
     
     return cell;
@@ -363,20 +406,22 @@
                                                                                forIndexPath:indexPath];
         header.delegate = self;
         header.section = indexPath.section;
-        header.title = @"Similar";
         
-        // 设置该分区的照片数量
-        NSArray *sectionPhotos = self.groupedPhotos[indexPath.section];
-        header.photoCount = sectionPhotos.count;
+        // 根据媒体类型设置不同的标题
+        header.title = (self.mediaType == KJMediaTypeVideo) ? @"Similar Videos" : @"Similar";
+        
+        // 设置该分区的照片/视频数量
+        NSArray *sectionItems = self.groupedPhotos[indexPath.section];
+        header.photoCount = sectionItems.count;
         
         // Check if all items in this section are selected
         NSInteger selectedCount = 0;
-        for (NSInteger item = 0; item < sectionPhotos.count; item++) {
+        for (NSInteger item = 0; item < sectionItems.count; item++) {
             if ([self.selectedIndexPaths containsObject:[NSIndexPath indexPathForItem:item inSection:indexPath.section]]) {
                 selectedCount++;
             }
         }
-        header.isAllSelected = selectedCount == sectionPhotos.count;
+        header.isAllSelected = selectedCount == sectionItems.count;
         
         return header;
     }
@@ -479,18 +524,18 @@
 }
 
 - (void)updateTotalPhotosCount {
-    // 计算并更新总照片数量
-    NSInteger totalPhotos = 0;
+    // 计算并更新总媒体数量
+    NSInteger totalItems = 0;
     for (NSArray<PHAsset *> *group in self.groupedPhotos) {
-        totalPhotos += group.count;
+        totalItems += group.count;
     }
     
-    if (totalPhotos > 0) {
-        // 配置摘要视图并显示
-        [self.summaryHeaderView configureWithCount:totalPhotos];
+    if (totalItems > 0) {
+        // 配置摘要视图并显示，传入媒体类型
+        [self.summaryHeaderView configureWithCount:totalItems mediaType:self.mediaType];
         self.summaryHeaderView.hidden = NO;
     } else {
-        // 如果没有照片，隐藏摘要视图
+        // 如果没有照片或视频，隐藏摘要视图
         self.summaryHeaderView.hidden = YES;
     }
 }
