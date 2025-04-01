@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>video_icon</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="video_icon" fill="#007AFF" fill-rule="nonzero">
+            <path d="M4,5 C2.89543,5 2,5.89543 2,7 L2,17 C2,18.1046 2.89543,19 4,19 L16,19 C17.1046,19 18,18.1046 18,17 L18,14.5858 L20.2929,16.8787 C20.9229,17.5087 22,17.0582 22,16.1716 L22,7.82843 C22,6.94177 20.9229,6.49123 20.2929,7.12132 L18,9.41421 L18,7 C18,5.89543 17.1046,5 16,5 L4,5 Z M4,7 L16,7 L16,17 L4,17 L4,7 Z M18,11.8284 L20,9.82843 L20,14.1716 L18,12.1716 L18,11.8284 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg> 

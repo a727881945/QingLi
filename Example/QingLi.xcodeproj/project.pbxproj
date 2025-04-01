@@ -39,6 +39,8 @@
 		EE61B56C2D9A54F600F03328 /* PINCache in Frameworks */ = {isa = PBXBuildFile; productRef = EE61B56B2D9A54F600F03328 /* PINCache */; };
 		EE61B5722D9A5B3300F03328 /* KJCustomPhotoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = EE61B5702D9A5B3300F03328 /* KJCustomPhotoLayout.m */; };
 		EEA8340C2D9BCD62000DCE61 /* KJSummaryHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = EEA8340B2D9BCD62000DCE61 /* KJSummaryHeaderView.m */; };
+		EEA834112D9BE4FC000DCE61 /* KJMediaCleanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EEA8340E2D9BE4FC000DCE61 /* KJMediaCleanViewController.m */; };
+		EEA834122D9BE4FC000DCE61 /* KJMediaManagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EEA834102D9BE4FC000DCE61 /* KJMediaManagerViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -107,6 +109,10 @@
 		EE61B5702D9A5B3300F03328 /* KJCustomPhotoLayout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJCustomPhotoLayout.m; sourceTree = "<group>"; };
 		EEA8340A2D9BCD62000DCE61 /* KJSummaryHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJSummaryHeaderView.h; sourceTree = "<group>"; };
 		EEA8340B2D9BCD62000DCE61 /* KJSummaryHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJSummaryHeaderView.m; sourceTree = "<group>"; };
+		EEA8340D2D9BE4FC000DCE61 /* KJMediaCleanViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJMediaCleanViewController.h; sourceTree = "<group>"; };
+		EEA8340E2D9BE4FC000DCE61 /* KJMediaCleanViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJMediaCleanViewController.m; sourceTree = "<group>"; };
+		EEA8340F2D9BE4FC000DCE61 /* KJMediaManagerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJMediaManagerViewController.h; sourceTree = "<group>"; };
+		EEA834102D9BE4FC000DCE61 /* KJMediaManagerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJMediaManagerViewController.m; sourceTree = "<group>"; };
 		F14A434A891FAF45E9307CC0 /* QingLi.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = QingLi.podspec; path = ../QingLi.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
@@ -166,6 +172,10 @@
 				EE12D0772D97B77A003A4E70 /* KJOptimizedDBSCAN.m */,
 				EE12CFC72D97A629003A4E70 /* KJPhotoCell.h */,
 				EE12CFC82D97A629003A4E70 /* KJPhotoCell.m */,
+				EEA8340D2D9BE4FC000DCE61 /* KJMediaCleanViewController.h */,
+				EEA8340E2D9BE4FC000DCE61 /* KJMediaCleanViewController.m */,
+				EEA8340F2D9BE4FC000DCE61 /* KJMediaManagerViewController.h */,
+				EEA834102D9BE4FC000DCE61 /* KJMediaManagerViewController.m */,
 				EE12CFC92D97A629003A4E70 /* KJPhotoSectionHeader.h */,
 				EE12CFCA2D97A629003A4E70 /* KJPhotoSectionHeader.m */,
 				EEA8340A2D9BCD62000DCE61 /* KJSummaryHeaderView.h */,
@@ -514,6 +524,8 @@
 			files = (
 				041239602D1A5EF700F171A0 /* KJContactsViewController.m in Sources */,
 				EE12D0222D97A9DB003A4E70 /* KJPhotoSimilarityManager.m in Sources */,
+				EEA834112D9BE4FC000DCE61 /* KJMediaCleanViewController.m in Sources */,
+				EEA834122D9BE4FC000DCE61 /* KJMediaManagerViewController.m in Sources */,
 				EE61B5722D9A5B3300F03328 /* KJCustomPhotoLayout.m in Sources */,
 				048325582D19A04B00F62578 /* KJTools.m in Sources */,
 				048325552D199FE700F62578 /* KJHomeViewController.m in Sources */,

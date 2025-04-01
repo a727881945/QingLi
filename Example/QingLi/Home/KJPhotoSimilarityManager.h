@@ -1,6 +1,7 @@
 #import <Foundation/Foundation.h>
 #import <Photos/Photos.h>
 #import <Vision/Vision.h>
+#import "KJMediaCleanViewController.h" // 导入媒体类型枚举
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,9 +21,13 @@ typedef NS_ENUM(NSInteger, KJPhotoLibraryError) {
 
 + (instancetype)sharedManager;
 
-// 获取相似照片组，带进度回调
-- (void)findSimilarPhotosWithProgress:(void(^)(float progress))progressBlock
-                           completion:(void(^)(NSArray<NSArray<PHAsset *> *> *similarGroups, NSError * _Nullable error))completion;
+// 设置要查找的媒体类型
+- (void)setMediaType:(KJMediaType)mediaType;
+
+// 获取相似照片组，带进度回调，新增媒体类型参数
+- (void)findSimilarPhotosWithMediaType:(KJMediaType)mediaType
+                         progressBlock:(void(^)(float progress))progressBlock
+                            completion:(void(^)(NSArray<NSArray<PHAsset *> *> *similarGroups, NSError * _Nullable error))completion;
 
 // 按日期对照片分组
 - (NSArray<NSDictionary<NSString *, id> *> *)groupPhotosByDate:(NSArray<PHAsset *> *)assets;

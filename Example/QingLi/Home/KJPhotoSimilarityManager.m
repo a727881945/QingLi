@@ -1,5 +1,6 @@
 #import "KJPhotoSimilarityManager.h"
 #import "KJOptimizedDBSCAN.h"
+#import "KJMediaCleanViewController.h"
 #import <Vision/Vision.h>
 #import <Vision/VNObservation.h>
 #import <QuartzCore/QuartzCore.h>
@@ -335,6 +336,7 @@
 @property (nonatomic, strong) dispatch_semaphore_t concurrencySemaphore;
 @property (nonatomic, assign) float similarityThreshold;
 @property (nonatomic, assign) CGSize targetImageSize;
+@property (nonatomic, assign) KJMediaType mediaType; // 添加媒体类型属性
 
 @end
 
@@ -356,6 +358,7 @@
         _concurrencySemaphore = dispatch_semaphore_create(4); // 限制最大并发数为4
         _similarityThreshold = 0.5f; // 相似度阈值，值越小要求越严格
         _targetImageSize = CGSizeMake(150, 150); // 缩略图尺寸
+        _mediaType = KJMediaTypeVideo; // 默认为视频类型
         
         // 延迟应用启动时初始化和维护缓存，等UI显示后再执行
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
@@ -363,6 +366,11 @@
         });
     }
     return self;
+}
+
+// 设置媒体类型
+- (void)setMediaType:(KJMediaType)mediaType {
+    _mediaType = mediaType;
 }
 
 // 在应用启动时初始化和维护缓存
@@ -394,8 +402,12 @@
 
 #pragma mark - 公共方法
 
-- (void)findSimilarPhotosWithProgress:(void(^)(float progress))progressBlock
-                           completion:(void(^)(NSArray<NSArray<PHAsset *> *> *similarGroups, NSError * _Nullable error))completion {
+- (void)findSimilarPhotosWithMediaType:(KJMediaType)mediaType
+                         progressBlock:(void(^)(float progress))progressBlock
+                            completion:(void(^)(NSArray<NSArray<PHAsset *> *> *similarGroups, NSError * _Nullable error))completion {
+    // 设置当前媒体类型
+    self.mediaType = mediaType;
+    
     // 切换到后台队列执行
     dispatch_async(self.processingQueue, ^{
         // 请求照片库访问权限
@@ -576,7 +588,33 @@
     PHFetchOptions *options = [[PHFetchOptions alloc] init];
     options.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:@"creationDate" ascending:YES]];
     
-    PHFetchResult *fetchResult = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeImage options:options];
+    PHFetchResult *fetchResult;
+    switch (self.mediaType) {
+        case KJMediaTypeVideo:
+            options.predicate = [NSPredicate predicateWithFormat:@"mediaType == %d", PHAssetMediaTypeVideo];
+            fetchResult = [PHAsset fetchAssetsWithOptions:options];
+            break;
+            
+        case KJMediaTypeLivePhoto:
+            if (@available(iOS 9.1, *)) {
+                options.predicate = [NSPredicate predicateWithFormat:@"(mediaSubtypes & %d) != 0", PHAssetMediaSubtypePhotoLive];
+                fetchResult = [PHAsset fetchAssetsWithOptions:options];
+            } else {
+                // 创建一个空的PHFetchResult
+                fetchResult = [PHAsset fetchAssetsWithOptions:[[PHFetchOptions alloc] init]];
+                // 由于iOS 9.1以下没有Live Photo，所以返回空结果
+            }
+            break;
+            
+        case KJMediaTypeScreenshot:
+            options.predicate = [NSPredicate predicateWithFormat:@"(mediaSubtypes & %d) != 0", PHAssetMediaSubtypePhotoScreenshot];
+            fetchResult = [PHAsset fetchAssetsWithOptions:options];
+            break;
+            
+        default: // 默认处理相似照片（普通照片）
+            fetchResult = [PHAsset fetchAssetsWithMediaType:PHAssetMediaTypeImage options:options];
+            break;
+    }
     
     NSMutableArray<PHAsset *> *assets = [NSMutableArray arrayWithCapacity:fetchResult.count];
     
@@ -619,7 +657,7 @@
                    progressBlock:(void(^)(float progress))progressBlock
                       completion:(void(^)(NSArray<NSArray<PHAsset *> *> *similarGroups, NSError * _Nullable error))completion {
     
-    __block NSMutableArray<NSArray<PHAsset *> *> *finalSimilarGroups = [NSMutableArray array];
+    NSMutableArray<NSArray<PHAsset *> *> *finalSimilarGroups = [NSMutableArray array];
     __block NSInteger totalGroups = groups.count;
     __block NSInteger processedGroups = 0;
     
@@ -637,8 +675,13 @@
         
         // 处理每个组
         [self processGroup:assetGroup completion:^(NSArray<NSArray<PHAsset *> *> *similarGroups) {
-            @synchronized (finalSimilarGroups) {
-                [finalSimilarGroups addObjectsFromArray:similarGroups];
+            // 只添加包含两个或更多照片的相似组
+            for (NSArray<PHAsset *> *similarGroup in similarGroups) {
+                if (similarGroup.count >= 2) {
+                    @synchronized (finalSimilarGroups) {
+                        [finalSimilarGroups addObject:similarGroup];
+                    }
+                }
             }
             
             processedGroups++;
@@ -1045,6 +1088,12 @@
             completion([assetClusters copy], nil);
         });
     }
+}
+
+// 保留原方法作为兼容方法，默认使用普通照片类型
+- (void)findSimilarPhotosWithProgress:(void(^)(float progress))progressBlock
+                           completion:(void(^)(NSArray<NSArray<PHAsset *> *> *similarGroups, NSError * _Nullable error))completion {
+    [self findSimilarPhotosWithMediaType:KJMediaTypePhoto progressBlock:progressBlock completion:completion];
 }
 
 @end 

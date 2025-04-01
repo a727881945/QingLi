@@ -8,6 +8,7 @@
 
 #import "KJHomeViewController.h"
 #import "KJSmartCleanViewController.h"
+#import "KJMediaCleanViewController.h"
 
 typedef NS_ENUM(NSUInteger, KJHomeViewFeatureType) {
     KJHomeViewFeatureTypeSimilarPhotos = 300,
@@ -238,7 +239,7 @@ typedef NS_ENUM(NSUInteger, KJHomeViewFeatureType) {
         }
         {
             QMUIButton *featureBT = [QMUIButton buttonWithType:UIButtonTypeCustom];
-            featureBT.tag = KJHomeViewFeatureTypeSimilarPhotos;
+            featureBT.tag = KJHomeViewFeatureTypeScreeshot;
             featureBT.frame = CGRectMake(fitScale(192.5), navHeight+423, fitScale(168.5), 60);
             featureBT.backgroundColor = [UIColor qmui_colorWithHexString:@"#FFFFFF"];
             featureBT.layer.cornerRadius = 4;
@@ -291,11 +292,30 @@ typedef NS_ENUM(NSUInteger, KJHomeViewFeatureType) {
 
 - (void)didClickFeaturButton:(UIButton *)button {
     KJHomeViewFeatureType type = button.tag;
-    if (type == KJHomeViewFeatureTypeSimilarPhotos) {
-        KJSmartCleanViewController *scvc = KJSmartCleanViewController.new;
-        [self.navigationController pushViewController:scvc animated:YES];
+    switch (type) {
+        case KJHomeViewFeatureTypeSimilarPhotos: {
+            KJSmartCleanViewController *scvc = [[KJSmartCleanViewController alloc] init];
+            [self.navigationController pushViewController:scvc animated:YES];
+            break;
+        }
+        case KJHomeViewFeatureTypeVideos: {
+            KJMediaCleanViewController *vc = [[KJMediaCleanViewController alloc] initWithMediaType:KJMediaTypeVideo];
+            [self.navigationController pushViewController:vc animated:YES];
+            break;
+        }
+        case KJHomeViewFeatureTypeLivePhotos: {
+            KJMediaCleanViewController *vc = [[KJMediaCleanViewController alloc] initWithMediaType:KJMediaTypeLivePhoto];
+            [self.navigationController pushViewController:vc animated:YES];
+            break;
+        }
+        case KJHomeViewFeatureTypeScreeshot: {
+            KJMediaCleanViewController *vc = [[KJMediaCleanViewController alloc] initWithMediaType:KJMediaTypeScreenshot];
+            [self.navigationController pushViewController:vc animated:YES];
+            break;
+        }
+        default:
+            break;
     }
-    
 }
 
 - (void)didClickSpeedTest {

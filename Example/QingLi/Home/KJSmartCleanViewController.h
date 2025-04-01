@@ -7,6 +7,7 @@
 //
 
 #import "KJBaseViewController.h"
+#import "KJMediaCleanViewController.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
