@@ -11,6 +11,7 @@
 #import "KJPhotoSectionHeader.h"
 #import "KJPhotoSimilarityManager.h"
 #import "Layout/KJCustomPhotoLayout.h"
+#import "KJSummaryHeaderView.h"
 #import <Photos/Photos.h>
 #import <Vision/Vision.h>
 
@@ -27,6 +28,7 @@
 @property (nonatomic, strong) UILabel *statusLabel;
 @property (nonatomic, strong) UILabel *descriptionLabel;
 @property (nonatomic, strong) UILabel *navTitleLabel; // 自定义标题
+@property (nonatomic, strong) KJSummaryHeaderView *summaryHeaderView; // 摘要视图
 
 @end
 
@@ -42,6 +44,7 @@
     [self setupNavigationBar];
     [self setupGradientView];
     [self setupDeleteButton];  // 先初始化底部按钮
+    [self setupSummaryHeaderView]; // 初始化摘要视图
     [self setupCollectionView]; // 再初始化collection
     [self setupLoadingViews];
     [self requestPhotoLibraryAccess];
@@ -210,7 +213,8 @@
     
     // 需要确保deleteButton已经被添加到视图中并有正确的约束
     [self.collectionView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.view);
+        // 将CollectionView顶部与summaryHeaderView底部对齐
+        make.top.equalTo(self.summaryHeaderView.mas_bottom).offset(fitScale(8));
         make.left.equalTo(self.view);
         make.right.equalTo(self.view);
         // 确保这里使用强引用，避免约束问题
@@ -299,11 +303,14 @@
         // 隐藏描述标签
         self.descriptionLabel.hidden = YES;
         
-        // 显示集合视图
-        self.collectionView.hidden = NO;
-        
         // 更新数据源
         self.groupedPhotos = similarGroups;
+        
+        // 先更新总照片数量标签
+        [self updateTotalPhotosCount];
+        
+        // 再显示集合视图
+        self.collectionView.hidden = NO;
         [self.collectionView reloadData];
         
         // 没有找到相似照片时提示用户
@@ -349,10 +356,13 @@
                                                                                forIndexPath:indexPath];
         header.delegate = self;
         header.section = indexPath.section;
-        header.title = [NSString stringWithFormat:@"Similar%ld", (long)indexPath.section + 1];
+        header.title = @"Similar";
+        
+        // 设置该分区的照片数量
+        NSArray *sectionPhotos = self.groupedPhotos[indexPath.section];
+        header.photoCount = sectionPhotos.count;
         
         // Check if all items in this section are selected
-        NSArray *sectionPhotos = self.groupedPhotos[indexPath.section];
         NSInteger selectedCount = 0;
         for (NSInteger item = 0; item < sectionPhotos.count; item++) {
             if ([self.selectedIndexPaths containsObject:[NSIndexPath indexPathForItem:item inSection:indexPath.section]]) {
@@ -445,7 +455,9 @@
             if (success) {
                 [self.selectedIndexPaths removeAllObjects];
                 [self.selectedPhotos removeAllObjects];
-                [self findSimilarPhotos]; // 重新分析照片
+                
+                // 重新分析照片并更新UI
+                [self findSimilarPhotos];
                 [self updateDeleteButtonState];
             } else {
                 // Handle error
@@ -459,25 +471,61 @@
     }];
 }
 
+- (void)updateTotalPhotosCount {
+    // 计算并更新总照片数量
+    NSInteger totalPhotos = 0;
+    for (NSArray<PHAsset *> *group in self.groupedPhotos) {
+        totalPhotos += group.count;
+    }
+    
+    if (totalPhotos > 0) {
+        // 配置摘要视图并显示
+        [self.summaryHeaderView configureWithCount:totalPhotos];
+        self.summaryHeaderView.hidden = NO;
+    } else {
+        // 如果没有照片，隐藏摘要视图
+        self.summaryHeaderView.hidden = YES;
+    }
+}
+
 #pragma mark - UIScrollViewDelegate
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-    if (scrollView == self.collectionView) {
-        // 根据滚动位置设置标题透明度
-        CGFloat scrollOffset = scrollView.contentOffset.y;
-        CGFloat threshold = 50.0; // 可以调整此值以改变标题消失的速度
-        
-        if (scrollOffset <= 0) {
-            // 顶部时完全显示
-            self.navTitleLabel.alpha = 1.0;
-        } else if (scrollOffset > threshold) {
-            // 超过阈值时完全隐藏
-            self.navTitleLabel.alpha = 0.0;
-        } else {
-            // 逐渐隐藏
-            self.navTitleLabel.alpha = 1.0 - (scrollOffset / threshold);
-        }
-    }
+//    if (scrollView == self.collectionView) {
+//        // 根据滚动位置设置标题透明度
+//        CGFloat scrollOffset = scrollView.contentOffset.y;
+//        CGFloat threshold = 50.0; // 可以调整此值以改变标题消失的速度
+//        
+//        if (scrollOffset <= 0) {
+//            // 顶部时完全显示
+//            self.navTitleLabel.alpha = 1.0;
+//        } else if (scrollOffset > threshold) {
+//            // 超过阈值时完全隐藏
+//            self.navTitleLabel.alpha = 0.0;
+//        } else {
+//            // 逐渐隐藏
+//            self.navTitleLabel.alpha = 1.0 - (scrollOffset / threshold);
+//        }
+//    }
+}
+
+- (void)setupSummaryHeaderView {
+    // 创建摘要视图
+    self.summaryHeaderView = [[KJSummaryHeaderView alloc] init];
+    
+    // 添加到视图层级
+    [self.view addSubview:self.summaryHeaderView];
+    
+    // 设置约束
+    [self.summaryHeaderView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.view.mas_safeAreaLayoutGuideTop).offset(fitScale(12));
+        make.left.equalTo(self.view).offset(fitScale(16));
+        make.right.lessThanOrEqualTo(self.view).offset(-fitScale(16));
+        make.height.mas_equalTo(fitScale(40));
+    }];
+    
+    // 默认隐藏，等待数据加载完成后显示
+    self.summaryHeaderView.hidden = YES;
 }
 
 @end

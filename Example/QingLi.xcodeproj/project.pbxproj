@@ -38,6 +38,7 @@
 		EE61B5692D9A54CA00F03328 /* Toast in Frameworks */ = {isa = PBXBuildFile; productRef = EE61B5682D9A54CA00F03328 /* Toast */; };
 		EE61B56C2D9A54F600F03328 /* PINCache in Frameworks */ = {isa = PBXBuildFile; productRef = EE61B56B2D9A54F600F03328 /* PINCache */; };
 		EE61B5722D9A5B3300F03328 /* KJCustomPhotoLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = EE61B5702D9A5B3300F03328 /* KJCustomPhotoLayout.m */; };
+		EEA8340C2D9BCD62000DCE61 /* KJSummaryHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = EEA8340B2D9BCD62000DCE61 /* KJSummaryHeaderView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +105,8 @@
 		EE12D0772D97B77A003A4E70 /* KJOptimizedDBSCAN.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJOptimizedDBSCAN.m; sourceTree = "<group>"; };
 		EE61B56F2D9A5B3300F03328 /* KJCustomPhotoLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJCustomPhotoLayout.h; sourceTree = "<group>"; };
 		EE61B5702D9A5B3300F03328 /* KJCustomPhotoLayout.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJCustomPhotoLayout.m; sourceTree = "<group>"; };
+		EEA8340A2D9BCD62000DCE61 /* KJSummaryHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJSummaryHeaderView.h; sourceTree = "<group>"; };
+		EEA8340B2D9BCD62000DCE61 /* KJSummaryHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJSummaryHeaderView.m; sourceTree = "<group>"; };
 		F14A434A891FAF45E9307CC0 /* QingLi.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = QingLi.podspec; path = ../QingLi.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
@@ -165,6 +168,8 @@
 				EE12CFC82D97A629003A4E70 /* KJPhotoCell.m */,
 				EE12CFC92D97A629003A4E70 /* KJPhotoSectionHeader.h */,
 				EE12CFCA2D97A629003A4E70 /* KJPhotoSectionHeader.m */,
+				EEA8340A2D9BCD62000DCE61 /* KJSummaryHeaderView.h */,
+				EEA8340B2D9BCD62000DCE61 /* KJSummaryHeaderView.m */,
 				048325532D199FE700F62578 /* KJHomeViewController.h */,
 				048325542D199FE700F62578 /* KJHomeViewController.m */,
 				04714B132D1D0A9D00C66CBC /* KJSmartCleanViewController.h */,
@@ -514,6 +519,7 @@
 				048325552D199FE700F62578 /* KJHomeViewController.m in Sources */,
 				04714B152D1D0A9D00C66CBC /* KJSmartCleanViewController.m in Sources */,
 				048325522D199FD100F62578 /* KJBaseViewController.m in Sources */,
+				EEA8340C2D9BCD62000DCE61 /* KJSummaryHeaderView.m in Sources */,
 				6003F59E195388D20070C39A /* KJAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* KJViewController.m in Sources */,
 				041239642D1A5F3900F171A0 /* KJProfileViewController.m in Sources */,

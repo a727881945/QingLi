@@ -4,7 +4,7 @@
 @interface KJPhotoCell()
 
 @property (nonatomic, strong) UIImageView *imageView;
-@property (nonatomic, strong) UIImageView *checkmarkView;
+@property (nonatomic, strong) UIImageView *selectStateImageView;
 @property (nonatomic, strong) UILabel *bestPhotoLabel;
 
 @end
@@ -35,13 +35,13 @@
         make.edges.equalTo(self.contentView);
     }];
     
-    // Checkmark View
-    self.checkmarkView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"checkmark"]];
-    self.checkmarkView.hidden = YES;
-    [self.contentView addSubview:self.checkmarkView];
-    [self.checkmarkView mas_makeConstraints:^(MASConstraintMaker *make) {
-        make.top.right.equalTo(self.contentView).insets(UIEdgeInsetsMake(5, 0, 0, 5));
-        make.size.mas_equalTo(CGSizeMake(20, 20));
+    // Select State Image View
+    self.selectStateImageView = [[UIImageView alloc] init];
+    self.selectStateImageView.contentMode = UIViewContentModeScaleAspectFit;
+    [self.contentView addSubview:self.selectStateImageView];
+    [self.selectStateImageView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.right.equalTo(self.contentView).insets(UIEdgeInsetsMake(3.5, 0, 0, 3.5));
+        make.size.mas_equalTo(CGSizeMake(12, 12));
     }];
     
     // Best Photo Label
@@ -52,7 +52,7 @@
     self.bestPhotoLabel.backgroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
     self.bestPhotoLabel.textAlignment = NSTextAlignmentCenter;
     self.bestPhotoLabel.hidden = YES;
-    [self.contentView addSubview:self.bestPhotoLabel];
+    [self.imageView addSubview:self.bestPhotoLabel];
     [self.bestPhotoLabel mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.right.bottom.equalTo(self.contentView);
         make.height.mas_equalTo(20);
@@ -93,7 +93,11 @@
 }
 
 - (void)updateSelectionState {
-    self.checkmarkView.hidden = !self.isSelected;
+    // 更新选中状态图标
+    UIImage *stateImage = self.isSelected ? [UIImage imageNamed:@"select_icon"] : [UIImage imageNamed:@"unselect_icon"];
+    self.selectStateImageView.image = stateImage;
+    
+    // 更新边框
     self.contentView.layer.borderWidth = self.isSelected ? 2 : 0;
     self.contentView.layer.borderColor = self.isSelected ? [UIColor qmui_colorWithHexString:@"#0092FF"].CGColor : [UIColor clearColor].CGColor;
 }

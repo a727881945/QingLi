@@ -14,6 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign) NSInteger section;
 @property (nonatomic, assign) BOOL isAllSelected;
 @property (nonatomic, copy) NSString *title;
+@property (nonatomic, assign) NSInteger photoCount;
 
 + (NSString *)identifier;
 
