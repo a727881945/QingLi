@@ -570,7 +570,7 @@
             
             // 获取完整的联系人信息
             NSError *fetchError = nil;
-            CNContact *fullContact = [contactStore unifiedContactWithIdentifier:contact.identifier keysToFetch:[CNContactViewController descriptorForRequiredKeys] error:&fetchError];
+            CNContact *fullContact = [contactStore unifiedContactWithIdentifier:contact.identifier keysToFetch:@[[CNContactViewController descriptorForRequiredKeys]] error:&fetchError];
             
             if (!fetchError && fullContact) {
                 CNMutableContact *mutableContact = [fullContact mutableCopy];
