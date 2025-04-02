@@ -80,18 +80,28 @@
 }
 
 - (void)switchToViewController:(UIViewController *)viewController {
+    QMUINavigationController *nav = [[QMUINavigationController alloc] initWithRootViewController:viewController];
+    nav.delegate = self;
     // 移除当前控制器视图
     [self.currentViewController.view removeFromSuperview];
     [self.currentViewController removeFromParentViewController];
 
     // 添加新的控制器视图
-    [self addChildViewController:viewController];
-    [self.view insertSubview:viewController.view belowSubview:self.customTabBar];
-    [viewController.view mas_makeConstraints:^(MASConstraintMaker *make) {
+    [self addChildViewController:nav];
+    [self.view insertSubview:nav.view belowSubview:self.customTabBar];
+    [nav.view mas_makeConstraints:^(MASConstraintMaker *make) {
         make.edges.equalTo(self.view);
     }];
     
-    self.currentViewController = viewController;
+    self.currentViewController = nav;
+}
+
+- (void)navigationController:(UINavigationController *)navigationController willShowViewController:(UIViewController *)viewController animated:(BOOL)animated {
+    if (navigationController.viewControllers.count > 1) {
+        self.customTabBar.hidden = YES;
+    } else {
+        self.customTabBar.hidden = NO;
+    }
 }
 
 

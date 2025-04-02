@@ -342,9 +342,9 @@ PODS:
     - QMUIKit/QMUILog
   - QMUIKit/QMUIResources (4.8.0)
   - QMUIKit/QMUIWeakObjectContainer (4.8.0)
-  - SDWebImage (5.20.0):
-    - SDWebImage/Core (= 5.20.0)
-  - SDWebImage/Core (5.20.0)
+  - SDWebImage (5.21.0):
+    - SDWebImage/Core (= 5.21.0)
+  - SDWebImage/Core (5.21.0)
   - SSZipArchive (2.4.3)
 
 DEPENDENCIES:
@@ -381,9 +381,9 @@ SPEC CHECKSUMS:
   MJExtension: e97d164cb411aa9795cf576093a1fa208b4a8dd8
   QingLi: 7782af329e8bf2cf2a34fa8adf6ab4a90f8baff3
   QMUIKit: 3c622fe3c55c0dccfad750634bd9ee5e7ade9a53
-  SDWebImage: 73c6079366fea25fa4bb9640d5fb58f0893facd8
+  SDWebImage: f84b0feeb08d2d11e6a9b843cb06d75ebf5b8868
   SSZipArchive: fe6a26b2a54d5a0890f2567b5cc6de5caa600aef
 
-PODFILE CHECKSUM: 2a7f4a6719378d1e86a4c540691f1c80b5244a3c
+PODFILE CHECKSUM: 18341688190beac04b0fc7b1b7bfe33ba071d581
 
-COCOAPODS: 1.16.2
+COCOAPODS: 1.15.2

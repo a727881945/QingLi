@@ -61,8 +61,8 @@ CACHE_KEYS:
       - MJExtension (3.4.2)
   Pods-QingLi_Example:
     BUILD_SETTINGS_CHECKSUM:
-      Debug: b3fc7914232ce1b1f8d8ab945f57f422
-      Release: 983a1e145feac3a75b32972368521270
+      Debug: f2dfe30020fcab20c02ce3d39bbe9a1e
+      Release: 161cccb61ac70f11c9da2d4016cd312f
   Pods-QingLi_Tests:
     BUILD_SETTINGS_CHECKSUM:
       Debug: 3e5d5052a6047fb057a2c6eb702d6c10
@@ -163,11 +163,11 @@ CACHE_KEYS:
       SDWebImage:
         :debug: 33349a22e1b3b9d854ad5f52f013a0d1
         :release: 33349a22e1b3b9d854ad5f52f013a0d1
-    CHECKSUM: 73c6079366fea25fa4bb9640d5fb58f0893facd8
+    CHECKSUM: f84b0feeb08d2d11e6a9b843cb06d75ebf5b8868
     PROJECT_NAME: SDWebImage
     SPECS:
-      - SDWebImage (5.20.0)
-      - SDWebImage/Core (5.20.0)
+      - SDWebImage (5.21.0)
+      - SDWebImage/Core (5.21.0)
   SSZipArchive:
     BUILD_SETTINGS_CHECKSUM:
       SSZipArchive:

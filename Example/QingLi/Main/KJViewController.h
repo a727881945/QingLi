@@ -7,6 +7,7 @@
 //
 
 @import UIKit;
+@import QMUIKit;
 
 @interface KJViewController : KJBaseViewController
 

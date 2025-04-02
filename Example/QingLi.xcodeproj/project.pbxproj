@@ -13,6 +13,9 @@
 		048325522D199FD100F62578 /* KJBaseViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 048325512D199FD100F62578 /* KJBaseViewController.m */; };
 		048325552D199FE700F62578 /* KJHomeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 048325542D199FE700F62578 /* KJHomeViewController.m */; };
 		048325582D19A04B00F62578 /* KJTools.m in Sources */ = {isa = PBXBuildFile; fileRef = 048325572D19A04B00F62578 /* KJTools.m */; };
+		049CA72E2D9D45E800A730C9 /* KJAllContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049CA72D2D9D45E800A730C9 /* KJAllContactsViewController.m */; };
+		049CA7312D9D460200A730C9 /* KJContactDuplViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049CA7302D9D460200A730C9 /* KJContactDuplViewController.m */; };
+		049CA7342D9D462400A730C9 /* KJContactSimilarNameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049CA7332D9D462400A730C9 /* KJContactSimilarNameViewController.m */; };
 		04D64E272D12686A00C3A0F6 /* KJCustomTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D64E262D12686A00C3A0F6 /* KJCustomTabBar.m */; };
 		13422641856F5D6E44857628 /* Pods_QingLi_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4ED9404822204855F3BAF2B /* Pods_QingLi_Tests.framework */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
@@ -66,6 +69,12 @@
 		048325542D199FE700F62578 /* KJHomeViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJHomeViewController.m; sourceTree = "<group>"; };
 		048325562D19A04B00F62578 /* KJTools.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJTools.h; sourceTree = "<group>"; };
 		048325572D19A04B00F62578 /* KJTools.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJTools.m; sourceTree = "<group>"; };
+		049CA72C2D9D45E800A730C9 /* KJAllContactsViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJAllContactsViewController.h; sourceTree = "<group>"; };
+		049CA72D2D9D45E800A730C9 /* KJAllContactsViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJAllContactsViewController.m; sourceTree = "<group>"; };
+		049CA72F2D9D460200A730C9 /* KJContactDuplViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJContactDuplViewController.h; sourceTree = "<group>"; };
+		049CA7302D9D460200A730C9 /* KJContactDuplViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJContactDuplViewController.m; sourceTree = "<group>"; };
+		049CA7322D9D462400A730C9 /* KJContactSimilarNameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJContactSimilarNameViewController.h; sourceTree = "<group>"; };
+		049CA7332D9D462400A730C9 /* KJContactSimilarNameViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJContactSimilarNameViewController.m; sourceTree = "<group>"; };
 		04D64E252D12686A00C3A0F6 /* KJCustomTabBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJCustomTabBar.h; sourceTree = "<group>"; };
 		04D64E262D12686A00C3A0F6 /* KJCustomTabBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJCustomTabBar.m; sourceTree = "<group>"; };
 		10F6F684201175315B5805A1 /* Pods-QingLi_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QingLi_Example.debug.xcconfig"; path = "Target Support Files/Pods-QingLi_Example/Pods-QingLi_Example.debug.xcconfig"; sourceTree = "<group>"; };
@@ -149,6 +158,12 @@
 			children = (
 				0412395E2D1A5EF700F171A0 /* KJContactsViewController.h */,
 				0412395F2D1A5EF700F171A0 /* KJContactsViewController.m */,
+				049CA72C2D9D45E800A730C9 /* KJAllContactsViewController.h */,
+				049CA72D2D9D45E800A730C9 /* KJAllContactsViewController.m */,
+				049CA72F2D9D460200A730C9 /* KJContactDuplViewController.h */,
+				049CA7302D9D460200A730C9 /* KJContactDuplViewController.m */,
+				049CA7322D9D462400A730C9 /* KJContactSimilarNameViewController.h */,
+				049CA7332D9D462400A730C9 /* KJContactSimilarNameViewController.m */,
 			);
 			path = Contacts;
 			sourceTree = "<group>";
@@ -523,9 +538,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				041239602D1A5EF700F171A0 /* KJContactsViewController.m in Sources */,
+				049CA72E2D9D45E800A730C9 /* KJAllContactsViewController.m in Sources */,
 				EE12D0222D97A9DB003A4E70 /* KJPhotoSimilarityManager.m in Sources */,
 				EEA834112D9BE4FC000DCE61 /* KJMediaCleanViewController.m in Sources */,
 				EEA834122D9BE4FC000DCE61 /* KJMediaManagerViewController.m in Sources */,
+				049CA7312D9D460200A730C9 /* KJContactDuplViewController.m in Sources */,
+				049CA7342D9D462400A730C9 /* KJContactSimilarNameViewController.m in Sources */,
 				EE61B5722D9A5B3300F03328 /* KJCustomPhotoLayout.m in Sources */,
 				048325582D19A04B00F62578 /* KJTools.m in Sources */,
 				048325552D199FE700F62578 /* KJHomeViewController.m in Sources */,
@@ -667,15 +685,14 @@
 			baseConfigurationReference = 10F6F684201175315B5805A1 /* Pods-QingLi_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = JH28G98H7K;
+				DEVELOPMENT_TEAM = UB955PQL8J;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QingLi/QingLi-Prefix.pch";
 				INFOPLIST_FILE = "QingLi/QingLi-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = QingLi;
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.wangkejie.qingli;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wangkejie.qingli;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
@@ -687,15 +704,14 @@
 			baseConfigurationReference = 9D5919551AF22C0501B39CFB /* Pods-QingLi_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = JH28G98H7K;
+				DEVELOPMENT_TEAM = UB955PQL8J;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QingLi/QingLi-Prefix.pch";
 				INFOPLIST_FILE = "QingLi/QingLi-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = QingLi;
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				MODULE_NAME = ExampleApp;
-				PRODUCT_BUNDLE_IDENTIFIER = "org.cocoapods.demo.${PRODUCT_NAME:rfc1034identifier}";
-				"PRODUCT_BUNDLE_IDENTIFIER[sdk=iphoneos*]" = com.wangkejie.qingli;
+				PRODUCT_BUNDLE_IDENTIFIER = com.wangkejie.qingli;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 				WRAPPER_EXTENSION = app;
