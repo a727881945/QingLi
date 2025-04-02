@@ -9,6 +9,7 @@
 #import "KJHomeViewController.h"
 #import "KJSmartCleanViewController.h"
 #import "KJMediaCleanViewController.h"
+#import "KJNetworkSpeedTestViewController.h"
 
 typedef NS_ENUM(NSUInteger, KJHomeViewFeatureType) {
     KJHomeViewFeatureTypeSimilarPhotos = 300,
@@ -319,7 +320,8 @@ typedef NS_ENUM(NSUInteger, KJHomeViewFeatureType) {
 }
 
 - (void)didClickSpeedTest {
-    
+    KJNetworkSpeedTestViewController *vc = [KJNetworkSpeedTestViewController new];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)setupCircularProgressView:(UIView *)circleView {

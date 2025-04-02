@@ -17,6 +17,9 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.view.backgroundColor = UIColor.whiteColor;
+    // 确保侧滑返回手势可用
+    self.navigationController.interactivePopGestureRecognizer.delegate = (id<UIGestureRecognizerDelegate>)self;
+    self.navigationController.interactivePopGestureRecognizer.enabled = YES;
     // Do any additional setup after loading the view.
 }
 
