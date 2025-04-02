@@ -16,6 +16,9 @@
 		049CA72E2D9D45E800A730C9 /* KJAllContactsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049CA72D2D9D45E800A730C9 /* KJAllContactsViewController.m */; };
 		049CA7312D9D460200A730C9 /* KJContactDuplViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049CA7302D9D460200A730C9 /* KJContactDuplViewController.m */; };
 		049CA7342D9D462400A730C9 /* KJContactSimilarNameViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 049CA7332D9D462400A730C9 /* KJContactSimilarNameViewController.m */; };
+		049CA7862D9D6B9800A730C9 /* KJContactHeaderCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 049CA7852D9D6B9800A730C9 /* KJContactHeaderCell.m */; };
+		049CA7892D9D6BD400A730C9 /* KJContactCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 049CA7882D9D6BD400A730C9 /* KJContactCell.m */; };
+		049CA78C2D9D6BFD00A730C9 /* KJSectionHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 049CA78B2D9D6BFD00A730C9 /* KJSectionHeaderView.m */; };
 		04D64E272D12686A00C3A0F6 /* KJCustomTabBar.m in Sources */ = {isa = PBXBuildFile; fileRef = 04D64E262D12686A00C3A0F6 /* KJCustomTabBar.m */; };
 		13422641856F5D6E44857628 /* Pods_QingLi_Tests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4ED9404822204855F3BAF2B /* Pods_QingLi_Tests.framework */; };
 		6003F58E195388D20070C39A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6003F58D195388D20070C39A /* Foundation.framework */; };
@@ -75,6 +78,12 @@
 		049CA7302D9D460200A730C9 /* KJContactDuplViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJContactDuplViewController.m; sourceTree = "<group>"; };
 		049CA7322D9D462400A730C9 /* KJContactSimilarNameViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJContactSimilarNameViewController.h; sourceTree = "<group>"; };
 		049CA7332D9D462400A730C9 /* KJContactSimilarNameViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJContactSimilarNameViewController.m; sourceTree = "<group>"; };
+		049CA7842D9D6B9800A730C9 /* KJContactHeaderCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJContactHeaderCell.h; sourceTree = "<group>"; };
+		049CA7852D9D6B9800A730C9 /* KJContactHeaderCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJContactHeaderCell.m; sourceTree = "<group>"; };
+		049CA7872D9D6BD400A730C9 /* KJContactCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJContactCell.h; sourceTree = "<group>"; };
+		049CA7882D9D6BD400A730C9 /* KJContactCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJContactCell.m; sourceTree = "<group>"; };
+		049CA78A2D9D6BFD00A730C9 /* KJSectionHeaderView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJSectionHeaderView.h; sourceTree = "<group>"; };
+		049CA78B2D9D6BFD00A730C9 /* KJSectionHeaderView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJSectionHeaderView.m; sourceTree = "<group>"; };
 		04D64E252D12686A00C3A0F6 /* KJCustomTabBar.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJCustomTabBar.h; sourceTree = "<group>"; };
 		04D64E262D12686A00C3A0F6 /* KJCustomTabBar.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJCustomTabBar.m; sourceTree = "<group>"; };
 		10F6F684201175315B5805A1 /* Pods-QingLi_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QingLi_Example.debug.xcconfig"; path = "Target Support Files/Pods-QingLi_Example/Pods-QingLi_Example.debug.xcconfig"; sourceTree = "<group>"; };
@@ -162,6 +171,12 @@
 				049CA72D2D9D45E800A730C9 /* KJAllContactsViewController.m */,
 				049CA72F2D9D460200A730C9 /* KJContactDuplViewController.h */,
 				049CA7302D9D460200A730C9 /* KJContactDuplViewController.m */,
+				049CA7842D9D6B9800A730C9 /* KJContactHeaderCell.h */,
+				049CA7852D9D6B9800A730C9 /* KJContactHeaderCell.m */,
+				049CA7872D9D6BD400A730C9 /* KJContactCell.h */,
+				049CA7882D9D6BD400A730C9 /* KJContactCell.m */,
+				049CA78A2D9D6BFD00A730C9 /* KJSectionHeaderView.h */,
+				049CA78B2D9D6BFD00A730C9 /* KJSectionHeaderView.m */,
 				049CA7322D9D462400A730C9 /* KJContactSimilarNameViewController.h */,
 				049CA7332D9D462400A730C9 /* KJContactSimilarNameViewController.m */,
 			);
@@ -552,11 +567,14 @@
 				EEA8340C2D9BCD62000DCE61 /* KJSummaryHeaderView.m in Sources */,
 				6003F59E195388D20070C39A /* KJAppDelegate.m in Sources */,
 				6003F5A7195388D20070C39A /* KJViewController.m in Sources */,
+				049CA7892D9D6BD400A730C9 /* KJContactCell.m in Sources */,
 				041239642D1A5F3900F171A0 /* KJProfileViewController.m in Sources */,
 				6003F59A195388D20070C39A /* main.m in Sources */,
 				04D64E272D12686A00C3A0F6 /* KJCustomTabBar.m in Sources */,
 				EE12D0782D97B77A003A4E70 /* KJOptimizedDBSCAN.m in Sources */,
 				EE12CFCB2D97A629003A4E70 /* KJPhotoSectionHeader.m in Sources */,
+				049CA7862D9D6B9800A730C9 /* KJContactHeaderCell.m in Sources */,
+				049CA78C2D9D6BFD00A730C9 /* KJSectionHeaderView.m in Sources */,
 				EE12CFCC2D97A629003A4E70 /* KJPhotoCell.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
