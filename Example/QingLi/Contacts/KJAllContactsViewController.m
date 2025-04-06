@@ -25,29 +25,29 @@
 - (void)setupUI {
     
     CGFloat top = NavigationContentTop;
-    // 搜索框
+    // Search box
     self.searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, top, self.view.frame.size.width, 56)];
     self.searchBar.delegate = self;
-    self.searchBar.placeholder = @"搜索姓名或电话";
+    self.searchBar.placeholder = @"Search name or phone";
     [self.view addSubview:self.searchBar];
     top += 56;
-    // 表格视图
+    // Table view
     self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, top, self.view.frame.size.width, self.view.frame.size.height - 56 - top) style:UITableViewStylePlain];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"contactCell"];
     [self.view addSubview:self.tableView];
     
-    // 删除按钮
+    // Delete button
     self.deleteButton = [UIButton buttonWithType:UIButtonTypeSystem];
     self.deleteButton.frame = CGRectMake(0, self.view.frame.size.height - 60, self.view.frame.size.width, 60);
-    [self.deleteButton setTitle:@"删除选中联系人" forState:UIControlStateNormal];
+    [self.deleteButton setTitle:@"Delete selected contacts" forState:UIControlStateNormal];
     [self.deleteButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.deleteButton.backgroundColor = [UIColor systemRedColor];
     [self.deleteButton addTarget:self action:@selector(deleteSelectedContacts) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:self.deleteButton];
     
-    // 初始化数据
+    // Initialize data
     self.contacts = [NSMutableArray array];
     self.filteredContacts = [NSMutableArray array];
     self.selectedContacts = [NSMutableSet set];
@@ -103,7 +103,7 @@
     
     // 姓名和电话号码
     NSString *name = [NSString stringWithFormat:@"%@%@", contact.familyName, contact.givenName];
-    NSString *phoneNumber = @"无电话号码";
+    NSString *phoneNumber = @"No phone number";
     if (contact.phoneNumbers.count > 0) {
         CNPhoneNumber *phone = contact.phoneNumbers.firstObject.value;
         phoneNumber = phone.stringValue;
@@ -211,25 +211,25 @@
 
 - (void)deleteSelectedContacts {
     if (self.selectedContacts.count == 0) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" message:@"请先选择要删除的联系人" preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Warning" message:@"Please select the contact(s) you want to delete first." preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
         return;
     }
     
     // 添加确认弹窗
-    UIAlertController *confirmAlert = [UIAlertController alertControllerWithTitle:@"确认删除" 
-                                                                         message:[NSString stringWithFormat:@"确定要删除这%lu个联系人吗？", (unsigned long)self.selectedContacts.count] 
+    UIAlertController *confirmAlert = [UIAlertController alertControllerWithTitle:@"Confirm Delete"
+                                                                         message:[NSString stringWithFormat:@"Are you sure you want to delete this %lu contact?", (unsigned long)self.selectedContacts.count]
                                                                   preferredStyle:UIAlertControllerStyleAlert];
     
     // 取消按钮
-    [confirmAlert addAction:[UIAlertAction actionWithTitle:@"取消" 
-                                                     style:UIAlertActionStyleCancel 
+    [confirmAlert addAction:[UIAlertAction actionWithTitle:@"Cancel"
+                                                     style:UIAlertActionStyleCancel
                                                    handler:nil]];
     
     // 确认删除按钮
-    [confirmAlert addAction:[UIAlertAction actionWithTitle:@"删除" 
-                                                     style:UIAlertActionStyleDestructive 
+    [confirmAlert addAction:[UIAlertAction actionWithTitle:@"Confirm"
+                                                     style:UIAlertActionStyleDestructive
                                                    handler:^(UIAlertAction * _Nonnull action) {
         [self performDeleteContacts];
     }]];
@@ -255,8 +255,8 @@
         [self fetchAllContacts];
     } else {
         NSLog(@"删除失败: %@", error);
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"错误" message:@"删除联系人失败" preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" message:@"Failed to delete the contact." preferredStyle:UIAlertControllerStyleAlert];
+        [alert addAction:[UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
     }
 }

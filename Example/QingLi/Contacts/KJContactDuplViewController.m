@@ -128,18 +128,18 @@
 }
 
 - (void)showNoContactsAlert {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" 
-                                                                   message:@"未找到重复联系人" 
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"warning"
+                                                                   message:@"No duplicate contacts found."
                                                             preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
 }
 
 - (void)showPermissionDeniedAlert {
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"权限被拒绝" 
-                                                                   message:@"请在设置中允许访问通讯录" 
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"permission denied"
+                                                                   message:@"Please enable access to the contact list in the settings."
                                                             preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"confirm" style:UIAlertActionStyleDefault handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
 }
 
@@ -172,7 +172,7 @@
         // 设置名称
         NSString *name = [NSString stringWithFormat:@"%@ %@", contact.givenName, contact.familyName];
         if (name.length == 0) {
-            name = @"未知联系人";
+            name = @"Unknown contact";
         }
         cell.nameLabel.text = name;
         
@@ -201,7 +201,7 @@
         // 设置名称
         NSString *name = [NSString stringWithFormat:@"%@ %@", contact.givenName, contact.familyName];
         if (name.length == 0) {
-            name = @"未知联系人";
+            name = @"Unknown contact";
         }
         cell.nameLabel.text = name;
         
@@ -327,7 +327,7 @@
         [selectedInSection removeAllObjects];
         
         if (!allSelected) {
-            // 全选（除了第一个联系人）
+            // Select all (except the first contact)
             for (NSInteger i = 1; i < group.count; i++) {
                 [selectedInSection addObject:group[i]];
             }
@@ -353,7 +353,7 @@
     [selectedInSection removeAllObjects];
     
     if (!allSelected) {
-        // 全选（除了第一个联系人）
+        // Select all (except the first contact)
         for (NSInteger i = 1; i < group.count; i++) {
             [selectedInSection addObject:group[i]];
         }
@@ -374,10 +374,10 @@
     NSMutableSet *selectedInSection = self.selectedContacts[key];
     
     if (!selectedInSection || selectedInSection.count == 0) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"提示" 
-                                                                       message:@"请选择要合并的联系人" 
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Notice" 
+                                                                       message:@"Please select contacts to merge" 
                                                                 preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
         return;
     }
@@ -451,19 +451,19 @@
         [self.tableView reloadData];
         
         // 显示成功提示
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"成功" 
-                                                                       message:@"联系人已成功合并" 
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Success" 
+                                                                       message:@"Contacts merged successfully" 
                                                                 preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
     } else {
         NSLog(@"合并联系人失败: %@", saveError);
         
         // 显示错误提示
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"错误" 
-                                                                       message:@"合并联系人失败" 
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Error" 
+                                                                       message:@"Failed to merge contacts" 
                                                                 preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:nil]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
     }
 }
