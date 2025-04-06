@@ -10,6 +10,7 @@
 #import "KJSmartCleanViewController.h"
 #import "KJMediaCleanViewController.h"
 #import "KJNetworkSpeedTestViewController.h"
+#import "KJIAPViewController.h"
 
 typedef NS_ENUM(NSUInteger, KJHomeViewFeatureType) {
     KJHomeViewFeatureTypeSimilarPhotos = 300,
@@ -29,6 +30,18 @@ typedef NS_ENUM(NSUInteger, KJHomeViewFeatureType) {
 @end
 
 @implementation KJHomeViewController
+
+// 添加视图将要出现的方法，隐藏导航栏
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    [self.navigationController setNavigationBarHidden:YES animated:animated];
+}
+
+// 添加视图将要消失的方法，恢复导航栏
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    [self.navigationController setNavigationBarHidden:NO animated:animated];
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -53,6 +66,7 @@ typedef NS_ENUM(NSUInteger, KJHomeViewFeatureType) {
     rightTopBT.imagePosition = 0;
     rightTopBT.frame = CGRectMake(self.view.bounds.size.width - 70 - 14, top, 70, 26);
     rightTopBT.qmui_outsideEdge = UIEdgeInsetsMake(-2, -2, -2, -2);
+    [rightTopBT addTarget:self action:@selector(didClickIAP) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:rightTopBT];
     
     CGFloat width = self.view.bounds.size.width;
@@ -317,6 +331,14 @@ typedef NS_ENUM(NSUInteger, KJHomeViewFeatureType) {
         default:
             break;
     }
+}
+
+- (void)didClickIAP {
+    KJIAPViewController *vc = [KJIAPViewController new];
+    vc.modalPresentationStyle = UIModalPresentationFullScreen;
+    [self.navigationController presentViewController:vc animated:YES completion:^{
+            
+    }];
 }
 
 - (void)didClickSpeedTest {
