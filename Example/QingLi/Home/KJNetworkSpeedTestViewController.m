@@ -8,7 +8,7 @@
 
 #import "KJNetworkSpeedTestViewController.h"
 
-@interface KJNetworkSpeedTestViewController ()
+@interface KJNetworkSpeedTestViewController () <NSURLSessionDataDelegate, NSURLSessionTaskDelegate>
 
 @property (nonatomic, strong) UIView *speedometerView;
 @property (nonatomic, strong) CAShapeLayer *backgroundArcLayer;
@@ -40,7 +40,10 @@
 @property (nonatomic, assign) NSInteger downloadedBytes;
 @property (nonatomic, assign) NSInteger uploadedBytes;
 @property (nonatomic, strong) NSDate *startTime;
-
+@property (nonatomic, strong) NSDate *lastUpdateTime;
+@property (nonatomic, assign) double currentInstantSpeed;
+@property (nonatomic, assign) BOOL isDownloadTesting;
+@property (nonatomic, assign) BOOL isUploadTesting;
 @end
 
 @implementation KJNetworkSpeedTestViewController
@@ -69,8 +72,10 @@
 }
 
 - (void)setupSession {
-    NSURLSessionConfiguration *configuration =  [NSURLSessionConfiguration defaultSessionConfiguration];
-    self.session = [NSURLSession sessionWithConfiguration:configuration delegate:nil delegateQueue:nil];
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    self.session = [NSURLSession sessionWithConfiguration:configuration 
+                                                 delegate:self 
+                                            delegateQueue:nil];
 }
 
 - (void)setupUI {
@@ -126,12 +131,12 @@
     [self.speedometerView addSubview:self.unitLabel];
     
     // 状态标签
-    self.statusLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 200, 30)];
+    self.statusLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 30)];
     self.statusLabel.center = CGPointMake(self.speedometerView.bounds.size.width / 2, 200);
     self.statusLabel.textAlignment = NSTextAlignmentCenter;
     self.statusLabel.font = [UIFont systemFontOfSize:14];
     self.statusLabel.textColor = [UIColor grayColor];
-    self.statusLabel.text = @"正在测速中...";
+    self.statusLabel.text = @"Speed test is in progress...";
     [self.speedometerView addSubview:self.statusLabel];
     
     // 下载速度视图
@@ -262,13 +267,13 @@
     
     // 重置UI
     [self resetUI];
-    self.statusLabel.text = @"正在测速中...";
+    self.statusLabel.text = @"Speed test is in progress...";
     
     // 开始测试
     [self performPingTest];
     
-    // 启动定时器更新UI
-    self.speedTestTimer = [NSTimer scheduledTimerWithTimeInterval:0.5 
+    // 启动定时器更新UI，更频繁地更新UI以获得更流畅的效果
+    self.speedTestTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
                                                           target:self 
                                                         selector:@selector(updateSpeedTestUI) 
                                                         userInfo:nil 
@@ -282,12 +287,13 @@
     // 停止定时器
     [self.speedTestTimer invalidate];
     self.speedTestTimer = nil;
-    
+    self.isDownloadTesting = NO;
+    self.isUploadTesting = NO;
     // 取消所有任务
     [self.session invalidateAndCancel];
     [self setupSession];
     
-    self.statusLabel.text = @"测速已停止";
+    self.statusLabel.text = @"The speed measurement has been stopped.";
 }
 
 - (void)resetUI {
@@ -310,48 +316,6 @@
     [self.progressArcLayer addAnimation:animation forKey:@"path"];
 }
 
-- (void)updateSpeedTestUI {
-    // 更新速度显示
-    double currentSpeed = MAX(self.downloadSpeed, self.uploadSpeed);
-    self.speedLabel.text = [NSString stringWithFormat:@"%.2f", currentSpeed];
-    
-    // 更新进度弧
-    double progress = currentSpeed / 100.0; // 假设最大速度为100MB/s
-    progress = MIN(1.0, progress);
-    
-    CGFloat endAngle = -210 + progress * 240;
-    
-    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
-    animation.duration = 0.5;
-    animation.fromValue = (__bridge id)self.progressArcLayer.path;
-    animation.toValue = (__bridge id)[self createArcPathWithRadius:100 startAngle:-210 endAngle:endAngle].CGPath;
-    animation.fillMode = kCAFillModeForwards;
-    animation.removedOnCompletion = NO;
-    [self.progressArcLayer addAnimation:animation forKey:@"path"];
-    
-    // 更新颜色
-    UIColor *progressColor;
-    if (currentSpeed < 1.0) {
-        progressColor = [UIColor systemRedColor];
-    } else if (currentSpeed < 5.0) {
-        progressColor = [UIColor systemOrangeColor];
-    } else {
-        progressColor = [UIColor colorWithRed:0.0 green:0.8 blue:1.0 alpha:1.0];
-    }
-    
-    CABasicAnimation *colorAnimation = [CABasicAnimation animationWithKeyPath:@"strokeColor"];
-    colorAnimation.duration = 0.5;
-    colorAnimation.fromValue = (__bridge id)self.progressArcLayer.strokeColor;
-    colorAnimation.toValue = (__bridge id)progressColor.CGColor;
-    colorAnimation.fillMode = kCAFillModeForwards;
-    colorAnimation.removedOnCompletion = NO;
-    [self.progressArcLayer addAnimation:colorAnimation forKey:@"strokeColor"];
-    
-    // 更新下载/上传/Ping值
-    self.downloadValueLabel.text = [NSString stringWithFormat:@"%.2f Mbps", self.downloadSpeed * 8];
-    self.uploadValueLabel.text = [NSString stringWithFormat:@"%.2f Mbps", self.uploadSpeed * 8];
-    self.pingValueLabel.text = [NSString stringWithFormat:@"%.2f ms", self.pingTime];
-}
 
 #pragma mark - Speed Test Methods
 
@@ -387,36 +351,23 @@
 
 - (void)performDownloadTest {
     // 使用大文件进行下载测试
-    NSURL *url = [NSURL URLWithString:@"https://speed.cloudflare.com/__down?bytes=25000000"];
+    NSURL *url = [NSURL URLWithString:@"https://speed.cloudflare.com/__down?bytes=100000000"];
     
     self.downloadedBytes = 0;
     self.startTime = [NSDate date];
+    self.lastUpdateTime = [NSDate date];
+    self.isDownloadTesting = YES;
+    self.isUploadTesting = NO;
+    self.statusLabel.text = @"Testing download speed...";
     
-    NSURLSessionDataTask *downloadTask = [self.session dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            if (!error && data) {
-                NSTimeInterval duration = [[NSDate date] timeIntervalSinceDate:self.startTime];
-                if (duration > 0) {
-                    self.downloadSpeed = (data.length / 1024.0 / 1024.0) / duration; // MB/s
-                }
-                
-                // 下载测试完成后开始上传测试
-                [self performUploadTest];
-            } else {
-                self.downloadValueLabel.text = @"Error";
-                // 尝试上传测试
-                [self performUploadTest];
-            }
-        });
-    }];
-    
+    NSURLSessionDataTask *downloadTask = [self.session dataTaskWithURL:url];
     [downloadTask resume];
 }
 
 - (void)performUploadTest {
     // 创建一个大的数据包进行上传测试
-    NSMutableData *uploadData = [NSMutableData dataWithCapacity:5 * 1024 * 1024]; // 5MB
-    for (int i = 0; i < 5 * 1024 * 1024; i++) {
+    NSMutableData *uploadData = [NSMutableData dataWithCapacity:20 * 1024 * 1024]; // 20MB
+    for (int i = 0; i < 20 * 1024 * 1024; i++) {
         uint8_t byte = (uint8_t)(i % 256);
         [uploadData appendBytes:&byte length:1];
     }
@@ -428,29 +379,148 @@
     
     self.uploadedBytes = 0;
     self.startTime = [NSDate date];
+    self.lastUpdateTime = [NSDate date];
+    self.isDownloadTesting = NO;
+    self.isUploadTesting = YES;
+    self.statusLabel.text = @"Testing upload speed...";
     
-    NSURLSessionUploadTask *uploadTask = [self.session uploadTaskWithRequest:request fromData:uploadData completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
-        dispatch_async(dispatch_get_main_queue(), ^{
+    NSURLSessionUploadTask *uploadTask = [self.session uploadTaskWithRequest:request fromData:uploadData];
+    [uploadTask resume];
+}
+
+- (void)updateSpeedTestUI {
+    // 计算当前显示的速度
+    double displaySpeed = self.currentInstantSpeed;
+    
+    // 更新速度显示
+    self.speedLabel.text = [NSString stringWithFormat:@"%.2f", displaySpeed];
+    
+    // 更新进度弧
+    double progress = displaySpeed / 100.0; // 假设最大速度为100MB/s
+    progress = MIN(1.0, progress);
+    
+    CGFloat endAngle = -210 + progress * 240;
+    
+    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"path"];
+    animation.duration = 0.1; // 更快的动画以获得更流畅的效果
+    animation.fromValue = (__bridge id)self.progressArcLayer.path;
+    animation.toValue = (__bridge id)[self createArcPathWithRadius:100 startAngle:-210 endAngle:endAngle].CGPath;
+    animation.fillMode = kCAFillModeForwards;
+    animation.removedOnCompletion = NO;
+    [self.progressArcLayer addAnimation:animation forKey:@"path"];
+    
+    // 更新颜色
+    UIColor *progressColor;
+    if (displaySpeed < 1.0) {
+        progressColor = [UIColor systemRedColor];
+    } else if (displaySpeed < 5.0) {
+        progressColor = [UIColor systemOrangeColor];
+    } else {
+        progressColor = [UIColor colorWithRed:0.0 green:0.8 blue:1.0 alpha:1.0];
+    }
+    
+//    CABasicAnimation *colorAnimation = [CABasicAnimation animationWithKeyPath:@"strokeColor"];
+//    colorAnimation.duration = 0.1;
+//    colorAnimation.fromValue = (__bridge id)self.progressArcLayer.strokeColor;
+//    colorAnimation.toValue = (__bridge id)progressColor.CGColor;
+//    colorAnimation.fillMode = kCAFillModeForwards;
+//    colorAnimation.removedOnCompletion = NO;
+//    [self.progressArcLayer addAnimation:colorAnimation forKey:@"strokeColor"];
+    
+    // 更新下载/上传/Ping值
+    if (self.isDownloadTesting || self.downloadSpeed > 0) {
+        self.downloadValueLabel.text = [NSString stringWithFormat:@"%.2f Mbps", self.downloadSpeed * 8];
+    }
+    
+    if (self.isUploadTesting || self.uploadSpeed > 0) {
+        self.uploadValueLabel.text = [NSString stringWithFormat:@"%.2f Mbps", self.uploadSpeed * 8];
+    }
+    
+    if (self.pingTime > 0) {
+        self.pingValueLabel.text = [NSString stringWithFormat:@"%.2f ms", self.pingTime];
+    }
+}
+
+#pragma mark - NSURLSessionDataDelegate & NSURLSessionTaskDelegate
+
+- (void)URLSession:(NSURLSession *)session dataTask:(NSURLSessionDataTask *)dataTask didReceiveData:(NSData *)data {
+    if (self.isDownloadTesting) {
+        self.downloadedBytes += data.length;
+        
+        NSDate *now = [NSDate date];
+        NSTimeInterval timeSinceLastUpdate = [now timeIntervalSinceDate:self.lastUpdateTime];
+        
+        if (timeSinceLastUpdate >= 0.1) { // 每0.1秒更新一次速度
+            double instantSpeed = (data.length / 1024.0 / 1024.0) / timeSinceLastUpdate; // MB/s
+            self.currentInstantSpeed = instantSpeed;
+            
+            // 平滑处理，避免速度显示跳动太大
+            self.downloadSpeed = self.downloadSpeed * 0.7 + instantSpeed * 0.3;
+            
+            self.lastUpdateTime = now;
+        }
+    }
+}
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didSendBodyData:(int64_t)bytesSent totalBytesSent:(int64_t)totalBytesSent totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend {
+    if (self.isUploadTesting) {
+        NSDate *now = [NSDate date];
+        NSTimeInterval timeSinceLastUpdate = [now timeIntervalSinceDate:self.lastUpdateTime];
+        
+        if (timeSinceLastUpdate >= 0.1) { // 每0.1秒更新一次速度
+            double instantSpeed = (bytesSent / 1024.0 / 1024.0) / timeSinceLastUpdate; // MB/s
+            self.currentInstantSpeed = instantSpeed;
+            
+            // 平滑处理，避免速度显示跳动太大
+            self.uploadSpeed = self.uploadSpeed * 0.7 + instantSpeed * 0.3;
+            
+            self.lastUpdateTime = now;
+        }
+    }
+}
+
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didCompleteWithError:(NSError *)error {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (self.isDownloadTesting) {
+            self.isDownloadTesting = NO;
+            
             if (!error) {
                 NSTimeInterval duration = [[NSDate date] timeIntervalSinceDate:self.startTime];
                 if (duration > 0) {
-                    self.uploadSpeed = (uploadData.length / 1024.0 / 1024.0) / duration; // MB/s
+                    // 计算平均下载速度
+                    self.downloadSpeed = (self.downloadedBytes / 1024.0 / 1024.0) / duration; // MB/s
+                }
+                
+                // 下载测试完成后开始上传测试
+                [self performUploadTest];
+            } else {
+                self.downloadValueLabel.text = @"Error";
+                // 尝试上传测试
+                [self performUploadTest];
+            }
+        } else if (self.isUploadTesting) {
+            self.isUploadTesting = NO;
+            
+            if (!error) {
+                NSTimeInterval duration = [[NSDate date] timeIntervalSinceDate:self.startTime];
+                if (duration > 0) {
+                    // 计算平均上传速度
+                    self.uploadSpeed = (task.countOfBytesSent / 1024.0 / 1024.0) / duration; // MB/s
                 }
                 
                 // 测试完成
                 if (self.isTestRunning) {
-                    self.statusLabel.text = @"测速完成";
+                    self.statusLabel.text = @"Speed measurement completed";
+                    self.currentInstantSpeed = 0; // 测试完成后重置瞬时速度
                 }
             } else {
                 self.uploadValueLabel.text = @"Error";
                 if (self.isTestRunning) {
-                    self.statusLabel.text = @"测速完成(部分错误)";
+                    self.statusLabel.text = @"Speed measurement completed (partial errors)";
+                    self.currentInstantSpeed = 0; // 测试完成后重置瞬时速度
                 }
             }
-        });
-    }];
-    
-    [uploadTask resume];
+        }
+    });
 }
-
 @end
