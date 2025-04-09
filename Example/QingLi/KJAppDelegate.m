@@ -12,6 +12,9 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+    // 设置全局导航栏标题颜色为黑色
+    [[UINavigationBar appearance] setTitleTextAttributes:@{NSForegroundColorAttributeName: [UIColor blackColor]}];
+    
     // Override point for customization after application launch.
     return YES;
 }

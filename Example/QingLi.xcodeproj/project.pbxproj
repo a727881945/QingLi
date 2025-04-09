@@ -723,7 +723,7 @@
 			baseConfigurationReference = 10F6F684201175315B5805A1 /* Pods-QingLi_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = UB955PQL8J;
+				DEVELOPMENT_TEAM = JH28G98H7K;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QingLi/QingLi-Prefix.pch";
 				INFOPLIST_FILE = "QingLi/QingLi-Info.plist";
@@ -742,7 +742,7 @@
 			baseConfigurationReference = 9D5919551AF22C0501B39CFB /* Pods-QingLi_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = UB955PQL8J;
+				DEVELOPMENT_TEAM = JH28G98H7K;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QingLi/QingLi-Prefix.pch";
 				INFOPLIST_FILE = "QingLi/QingLi-Info.plist";

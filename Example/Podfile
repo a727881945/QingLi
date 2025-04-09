@@ -19,7 +19,6 @@ target 'QingLi_Example' do
   pod 'SDWebImage'
   pod 'QMUIKit'
   
-  
   target 'QingLi_Tests' do
     inherit! :search_paths
 

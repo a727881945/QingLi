@@ -86,17 +86,11 @@
     [self.view addSubview:star];
     
     // 标题
-    self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(36, 224, self.view.bounds.size.width - 36 - 95.5, 60)];
-    NSString *titleString = @"Unlock All Feature Free for 3 days";
+    NSString *titleString = @"Unlock All Features Free for 3 Days";
     NSMutableAttributedString *attString = [[NSMutableAttributedString alloc] initWithString:titleString];
-//    {
-//        // 基础段落样式
-//        NSMutableParagraphStyle *baseStyle = [[NSMutableParagraphStyle alloc] init];
-//        [baseStyle setParagraphSpacing:25];    // 段后间距
-//        [baseStyle setLineSpacing:10];         // 行间距
-//    }
     [attString addAttribute:NSForegroundColorAttributeName value:[UIColor qmui_colorWithHexString:@"#0069FF"] range:NSMakeRange(0, 6)];
     [attString addAttribute:NSFontAttributeName value:[UIFont boldSystemFontOfSize:21] range:NSMakeRange(0, titleString.length)];
+    self.titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(36, 224, self.view.bounds.size.width - 36 - 95.5, 60)];
     self.titleLabel.numberOfLines = 0;
     self.titleLabel.attributedText = attString;
     self.titleLabel.textAlignment = NSTextAlignmentLeft;
@@ -257,7 +251,7 @@
         }];
         // 添加标题标签
         UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        titleLabel.text = @"Three Days Free Trial   then ＄0.99/week";
+        titleLabel.text = @"3-Day Free Trial, then $0.99/week";
         titleLabel.font = [UIFont systemFontOfSize:15];
         titleLabel.textColor = [UIColor qmui_colorWithHexString:@"#457387"];
         [button addSubview:titleLabel];
@@ -310,7 +304,7 @@
         
         // 添加标题标签
         UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectZero];
-        titleLabel.text = @"Three Days Free Trial   then ＄19.99/month";
+        titleLabel.text = @"3-Day Free Trial, then $19.99/month";
         titleLabel.font = [UIFont systemFontOfSize:15];
         titleLabel.textColor = [UIColor qmui_colorWithHexString:@"#457387"];
         [button addSubview:titleLabel];
@@ -332,7 +326,7 @@
     self.trialButton = [UIButton buttonWithType:UIButtonTypeCustom];
     self.trialButton.frame = CGRectMake(47, self.view.qmui_height - 72 - 40 - safebottom, self.view.bounds.size.width - 96, 40);
     self.trialButton.layer.cornerRadius = 20;
-    [self.trialButton setTitle:@"Try it free" forState:UIControlStateNormal];
+    [self.trialButton setTitle:@"Start Free Trial" forState:UIControlStateNormal];
     [self.trialButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     self.trialButton.layer.masksToBounds = YES;
     self.trialButton.titleLabel.font = [UIFont boldSystemFontOfSize:16];
@@ -375,7 +369,7 @@
         
         QMUIButton *tearmButton = [QMUIButton buttonWithType:UIButtonTypeCustom];
         [self.view addSubview:tearmButton];
-        [tearmButton setTitle:@"Terms Of Use" forState:UIControlStateNormal];
+        [tearmButton setTitle:@"Terms of Use" forState:UIControlStateNormal];
         [tearmButton mas_makeConstraints:^(MASConstraintMaker *make) {
             make.right.mas_equalTo(lineView.mas_left).mas_offset(-17.5);
             make.width.mas_greaterThanOrEqualTo(1);
@@ -475,10 +469,10 @@
 
 - (void)trialButtonTapped {
     if (!self.selectedProduct) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"The product is unavailable."
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Product Unavailable"
                                                                        message:@"Unable to obtain product information. Please try again later."
                                                                 preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:nil]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
         return;
     }
@@ -488,10 +482,10 @@
         SKPayment *payment = [SKPayment paymentWithProduct:self.selectedProduct];
         [[SKPaymentQueue defaultQueue] addPayment:payment];
     } else {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Payment restricted"
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Payment Restricted"
                                                                        message:@"Your device is not permitted to make in-app purchases."
                                                                 preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:nil]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
     }
 }
@@ -537,10 +531,10 @@
 - (void)request:(SKRequest *)request didFailWithError:(NSError *)error {
     NSLog(@"Product request failed: %@", error.localizedDescription);
     
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Fail To Load"
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Failed to Load"
                                                                    message:@"The product information cannot be loaded. Please check your network connection and try again."
                                                             preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
 }
 
@@ -554,7 +548,7 @@
         NSString *weeklyPrice = [formatter stringFromNumber:weeklyProduct.price];
         
         UILabel *weeklyLabel = [self.weeklyButton.subviews objectAtIndex:1];
-        weeklyLabel.text = [NSString stringWithFormat:@"Three Days Free Trial  then %@/week", weeklyPrice];
+        weeklyLabel.text = [NSString stringWithFormat:@"3-Day Free Trial, then %@/week", weeklyPrice];
     }
     
     // 更新月订阅按钮
@@ -566,7 +560,7 @@
         NSString *monthlyPrice = [formatter stringFromNumber:monthlyProduct.price];
         
         UILabel *monthlyLabel = [self.monthlyButton.subviews objectAtIndex:1];
-        monthlyLabel.text = [NSString stringWithFormat:@"Three Days Free Trial  then %@/month", monthlyPrice];
+        monthlyLabel.text = [NSString stringWithFormat:@"3-Day Free Trial, then %@/month", monthlyPrice];
     }
 }
 
@@ -610,10 +604,10 @@
     [[SKPaymentQueue defaultQueue] finishTransaction:transaction];
     
     // 显示成功消息
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"purchase succeeds"
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Purchase Successful"
                                                                    message:@"You have successfully subscribed to the premium features!"
                                                             preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
         [self dismissViewControllerAnimated:YES completion:nil];
     }]];
     [self presentViewController:alert animated:YES completion:nil];
@@ -627,10 +621,10 @@
     
     // 显示错误消息
     if (transaction.error.code != SKErrorPaymentCancelled) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Purchase failed"
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Purchase Failed"
                                                                        message:transaction.error.localizedDescription
                                                                 preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:nil]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
     }
 }
@@ -653,16 +647,16 @@
     NSLog(@"恢复购买完成");
     
     if (queue.transactions.count == 0) {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"restore purchase"
-                                                                       message:@"No previous purchase records were found."
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Restore Complete"
+                                                                       message:@"No previous purchases were found."
                                                                 preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:nil]];
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
         [self presentViewController:alert animated:YES completion:nil];
     } else {
-        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"restore purchase"
-                                                                       message:@"Your purchase has been successfully restored!"
+        UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Restore Complete"
+                                                                       message:@"Your purchases have been successfully restored!"
                                                                 preferredStyle:UIAlertControllerStyleAlert];
-        [alert addAction:[UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
             [self dismissViewControllerAnimated:YES completion:nil];
         }]];
         [self presentViewController:alert animated:YES completion:nil];
@@ -672,10 +666,10 @@
 - (void)paymentQueue:(SKPaymentQueue *)queue restoreCompletedTransactionsFailedWithError:(NSError *)error {
     NSLog(@"恢复购买失败: %@", error.localizedDescription);
     
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Failed to restore purchase."
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Restore Failed"
                                                                    message:error.localizedDescription
                                                             preferredStyle:UIAlertControllerStyleAlert];
-    [alert addAction:[UIAlertAction actionWithTitle:@"Confirm" style:UIAlertActionStyleDefault handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil]];
     [self presentViewController:alert animated:YES completion:nil];
 }
 
