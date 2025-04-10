@@ -75,7 +75,7 @@
     CNContactStore *contactStore = [[CNContactStore alloc] init];
     [contactStore requestAccessForEntityType:CNEntityTypeContacts completionHandler:^(BOOL granted, NSError * _Nullable error) {
         if (granted) {
-            NSArray *keys = @[CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey, CNContactImageDataKey, CNContactThumbnailImageDataKey];
+            NSArray *keys = @[CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey, CNContactImageDataKey, CNContactThumbnailImageDataKey, CNContactEmailAddressesKey, CNContactPostalAddressesKey, CNContactUrlAddressesKey, CNContactRelationsKey, CNContactSocialProfilesKey, CNContactInstantMessageAddressesKey];
             CNContactFetchRequest *request = [[CNContactFetchRequest alloc] initWithKeysToFetch:keys];
             
             NSMutableDictionary *phoneNumberMap = [NSMutableDictionary dictionary];
@@ -403,8 +403,16 @@
     
     // 收集所有要删除的联系人
     NSMutableArray *contactsToDelete = [NSMutableArray array];
+        
+    // 合并所有信息
+    NSMutableArray<CNLabeledValue<CNPhoneNumber*>*>*phoneNumbers = [mutableTargetContact.phoneNumbers mutableCopy] ?: [NSMutableArray array];
+    NSMutableArray<CNLabeledValue<NSString*>*> *emailAddresses = [mutableTargetContact.emailAddresses mutableCopy] ?: [NSMutableArray array];
+    NSMutableArray<CNLabeledValue<CNPostalAddress*>*> *postalAddresses = [mutableTargetContact.postalAddresses mutableCopy] ?: [NSMutableArray array];
+    NSMutableArray<CNLabeledValue<NSString*>*> *urlAddresses = [mutableTargetContact.urlAddresses mutableCopy] ?: [NSMutableArray array];
+    NSMutableArray<CNLabeledValue<CNContactRelation*>*> *contactRelations = [mutableTargetContact.contactRelations mutableCopy] ?: [NSMutableArray array];
+    NSMutableArray<CNLabeledValue<CNSocialProfile*>*> *socialProfiles = [mutableTargetContact.socialProfiles mutableCopy] ?: [NSMutableArray array];
+    NSMutableArray<CNLabeledValue<CNInstantMessageAddress*>*> *instantMessageAddresses = [mutableTargetContact.instantMessageAddresses mutableCopy] ?: [NSMutableArray array];
     
-    NSMutableArray<CNLabeledValue<CNPhoneNumber*>*>*phoneNumbers = [NSMutableArray array];
     for (CNContact *contact in selectedInSection) {
         // 合并电话号码
         for (CNLabeledValue<CNPhoneNumber *> *phoneNumber in contact.phoneNumbers) {
@@ -413,12 +421,37 @@
             }
         }
         
-        // 合并其他信息（如邮箱、地址等）
-        // ...
+        // 合并邮箱
+        for (CNLabeledValue<NSString *> *email in contact.emailAddresses) {
+            if (![self contact:mutableTargetContact containsEmail:email.value]) {
+                [emailAddresses addObject:email];
+            }
+        }
         
+        // 合并地址
+        for (CNLabeledValue<CNPostalAddress *> *address in contact.postalAddresses) {
+            if (![self contact:mutableTargetContact containsPostalAddress:address.value]) {
+                [postalAddresses addObject:address];
+            }
+        }
+        
+        // 合并其他信息...
+        [urlAddresses addObjectsFromArray:contact.urlAddresses];
+        [contactRelations addObjectsFromArray:contact.contactRelations];
+        [socialProfiles addObjectsFromArray:contact.socialProfiles];
+        [instantMessageAddresses addObjectsFromArray:contact.instantMessageAddresses];
         [contactsToDelete addObject:contact];
     }
-    mutableTargetContact.phoneNumbers = phoneNumbers.copy;
+    
+    // 设置合并后的信息
+    mutableTargetContact.phoneNumbers = phoneNumbers;
+    mutableTargetContact.emailAddresses = emailAddresses;
+    mutableTargetContact.postalAddresses = postalAddresses;
+    mutableTargetContact.urlAddresses = urlAddresses;
+    mutableTargetContact.contactRelations = contactRelations;
+    mutableTargetContact.socialProfiles = socialProfiles;
+    mutableTargetContact.instantMessageAddresses = instantMessageAddresses;
+    
     // 保存更改
     CNSaveRequest *saveRequest = [[CNSaveRequest alloc] init];
     [saveRequest updateContact:mutableTargetContact];
@@ -468,15 +501,43 @@
     }
 }
 
+// 在合并电话号码时需要更严格的比较
 - (BOOL)contact:(CNContact *)contact containsPhoneNumber:(CNPhoneNumber *)phoneNumber {
-    NSString *targetNumber = [phoneNumber stringValue];
+    NSString *targetNumber = [[phoneNumber.stringValue componentsSeparatedByCharactersInSet:
+                             [[NSCharacterSet decimalDigitCharacterSet] invertedSet]] 
+                             componentsJoinedByString:@""];
     
     for (CNLabeledValue<CNPhoneNumber *> *existingPhoneNumber in contact.phoneNumbers) {
-        if ([[existingPhoneNumber.value stringValue] isEqualToString:targetNumber]) {
+        NSString *existingNumber = [[existingPhoneNumber.value.stringValue componentsSeparatedByCharactersInSet:
+                                   [[NSCharacterSet decimalDigitCharacterSet] invertedSet]] 
+                                   componentsJoinedByString:@""];
+        if ([existingNumber isEqualToString:targetNumber]) {
             return YES;
         }
     }
+    return NO;
+}
+
+// 新增辅助方法 - 检查邮箱是否已存在
+- (BOOL)contact:(CNContact *)contact containsEmail:(NSString *)email {
+    for (CNLabeledValue<NSString *> *existingEmail in contact.emailAddresses) {
+        if ([existingEmail.value isEqualToString:email]) {
+            return YES;
+        }
+    }
+    return NO;
+}
+
+// 新增辅助方法 - 检查地址是否已存在
+- (BOOL)contact:(CNContact *)contact containsPostalAddress:(CNPostalAddress *)address {
+    NSString *targetAddress = [CNPostalAddressFormatter stringFromPostalAddress:address style:CNPostalAddressFormatterStyleMailingAddress];
     
+    for (CNLabeledValue<CNPostalAddress *> *existingAddress in contact.postalAddresses) {
+        NSString *existingAddressStr = [CNPostalAddressFormatter stringFromPostalAddress:existingAddress.value style:CNPostalAddressFormatterStyleMailingAddress];
+        if ([existingAddressStr isEqualToString:targetAddress]) {
+            return YES;
+        }
+    }
     return NO;
 }
 
