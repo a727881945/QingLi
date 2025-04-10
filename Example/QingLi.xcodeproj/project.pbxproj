@@ -49,6 +49,7 @@
 		EEA8340C2D9BCD62000DCE61 /* KJSummaryHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = EEA8340B2D9BCD62000DCE61 /* KJSummaryHeaderView.m */; };
 		EEA834112D9BE4FC000DCE61 /* KJMediaCleanViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EEA8340E2D9BE4FC000DCE61 /* KJMediaCleanViewController.m */; };
 		EEA834122D9BE4FC000DCE61 /* KJMediaManagerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EEA834102D9BE4FC000DCE61 /* KJMediaManagerViewController.m */; };
+		EEA8343C2DA763C4000DCE61 /* AdSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EEA8343B2DA763C3000DCE61 /* AdSupport.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -137,6 +138,7 @@
 		EEA8340E2D9BE4FC000DCE61 /* KJMediaCleanViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJMediaCleanViewController.m; sourceTree = "<group>"; };
 		EEA8340F2D9BE4FC000DCE61 /* KJMediaManagerViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJMediaManagerViewController.h; sourceTree = "<group>"; };
 		EEA834102D9BE4FC000DCE61 /* KJMediaManagerViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJMediaManagerViewController.m; sourceTree = "<group>"; };
+		EEA8343B2DA763C3000DCE61 /* AdSupport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AdSupport.framework; path = System/Library/Frameworks/AdSupport.framework; sourceTree = SDKROOT; };
 		F14A434A891FAF45E9307CC0 /* QingLi.podspec */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = QingLi.podspec; path = ../QingLi.podspec; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
 /* End PBXFileReference section */
 
@@ -151,6 +153,7 @@
 				EE61B56C2D9A54F600F03328 /* PINCache in Frameworks */,
 				EE61B5692D9A54CA00F03328 /* Toast in Frameworks */,
 				C0A3BB4EAB17E170F22DFBAE /* Pods_QingLi_Example.framework in Frameworks */,
+				EEA8343C2DA763C4000DCE61 /* AdSupport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -289,6 +292,7 @@
 		6003F58C195388D20070C39A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				EEA8343B2DA763C3000DCE61 /* AdSupport.framework */,
 				6003F58D195388D20070C39A /* Foundation.framework */,
 				6003F58F195388D20070C39A /* CoreGraphics.framework */,
 				6003F591195388D20070C39A /* UIKit.framework */,
@@ -723,6 +727,7 @@
 			baseConfigurationReference = 10F6F684201175315B5805A1 /* Pods-QingLi_Example.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				DEVELOPMENT_TEAM = JH28G98H7K;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QingLi/QingLi-Prefix.pch";
@@ -742,6 +747,7 @@
 			baseConfigurationReference = 9D5919551AF22C0501B39CFB /* Pods-QingLi_Example.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				DEVELOPMENT_TEAM = JH28G98H7K;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QingLi/QingLi-Prefix.pch";
