@@ -98,7 +98,7 @@
         [self.view addSubview:button];
         
         UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(14, 14, 36, 36)];
-        imageView.image = [UIImage imageNamed:@"contact_sim"];
+        imageView.image = [UIImage imageNamed:@"similar_name"];
         [button addSubview:imageView];
         
         UILabel *titleLable = [[UILabel alloc] initWithFrame:CGRectMake(58, 0, 200, 64)];
