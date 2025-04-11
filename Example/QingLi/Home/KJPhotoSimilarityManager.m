@@ -172,8 +172,8 @@
     
     NSLog(@"预热缓存...");
     
-    // 计算要预热的资产数量 - 最多预热100张
-    NSInteger preheatCount = MIN(100, assets.count);
+    // 计算要预热的资产数量 - 最多预热1000张
+    NSInteger preheatCount = MIN(1000, assets.count);
     NSMutableArray<PHAsset *> *assetsToPreload = [NSMutableArray arrayWithCapacity:preheatCount];
     
     // 选择最近的照片进行预热
