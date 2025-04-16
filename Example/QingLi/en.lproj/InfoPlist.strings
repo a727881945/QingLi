@@ -1,2 +1,7 @@
 /* Localized versions of Info.plist keys */
+"CFBundleDisplayName" = "Clean Up";
+"CFBundleName" = "Clean Up";
+"NSContactsUsageDescription" = "This app needs access to your contacts to organize and manage your phone numbers.";
+"NSPhotoLibraryAddUsageDescription" = "This app needs access to your photo library to manage your photos.";
+"NSPhotoLibraryUsageDescription" = "This app needs access to your photo library to find and manage similar photos, helping you clean up your storage.";
 

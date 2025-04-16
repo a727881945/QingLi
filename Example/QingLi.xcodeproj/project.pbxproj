@@ -39,6 +39,10 @@
 		71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */; };
 		873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 873B8AEA1B1F5CCA007FD442 /* Main.storyboard */; };
 		C0A3BB4EAB17E170F22DFBAE /* Pods_QingLi_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3817416DF8C5CB89F4D30029 /* Pods_QingLi_Example.framework */; };
+		EE0A5B5D2DAF9DAF00E6FAE9 /* NBLaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EE0A5B5C2DAF9DAF00E6FAE9 /* NBLaunchScreen.storyboard */; };
+		EE0A5B5F2DAFA08D00E6FAE9 /* AAAA_1.png in Resources */ = {isa = PBXBuildFile; fileRef = EE0A5B5E2DAFA08D00E6FAE9 /* AAAA_1.png */; };
+		EE0A5B622DAFA0C400E6FAE9 /* AAAA_1@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = EE0A5B602DAFA0C400E6FAE9 /* AAAA_1@2x.png */; };
+		EE0A5B632DAFA0C400E6FAE9 /* AAAA_1@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = EE0A5B612DAFA0C400E6FAE9 /* AAAA_1@3x.png */; };
 		EE12CFCB2D97A629003A4E70 /* KJPhotoSectionHeader.m in Sources */ = {isa = PBXBuildFile; fileRef = EE12CFCA2D97A629003A4E70 /* KJPhotoSectionHeader.m */; };
 		EE12CFCC2D97A629003A4E70 /* KJPhotoCell.m in Sources */ = {isa = PBXBuildFile; fileRef = EE12CFC82D97A629003A4E70 /* KJPhotoCell.m */; };
 		EE12D0222D97A9DB003A4E70 /* KJPhotoSimilarityManager.m in Sources */ = {isa = PBXBuildFile; fileRef = EE12D0212D97A9DB003A4E70 /* KJPhotoSimilarityManager.m */; };
@@ -122,6 +126,10 @@
 		9FE9E0AE293A1F6C12CF6354 /* Pods-QingLi_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QingLi_Tests.debug.xcconfig"; path = "Target Support Files/Pods-QingLi_Tests/Pods-QingLi_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		BFEA2EB1A2A821CCA1B05142 /* Pods-QingLi_Tests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QingLi_Tests.release.xcconfig"; path = "Target Support Files/Pods-QingLi_Tests/Pods-QingLi_Tests.release.xcconfig"; sourceTree = "<group>"; };
 		D4ED9404822204855F3BAF2B /* Pods_QingLi_Tests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QingLi_Tests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EE0A5B5C2DAF9DAF00E6FAE9 /* NBLaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = NBLaunchScreen.storyboard; sourceTree = "<group>"; };
+		EE0A5B5E2DAFA08D00E6FAE9 /* AAAA_1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AAAA_1.png; sourceTree = "<group>"; };
+		EE0A5B602DAFA0C400E6FAE9 /* AAAA_1@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AAAA_1@2x.png"; sourceTree = "<group>"; };
+		EE0A5B612DAFA0C400E6FAE9 /* AAAA_1@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "AAAA_1@3x.png"; sourceTree = "<group>"; };
 		EE12CFC72D97A629003A4E70 /* KJPhotoCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJPhotoCell.h; sourceTree = "<group>"; };
 		EE12CFC82D97A629003A4E70 /* KJPhotoCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KJPhotoCell.m; sourceTree = "<group>"; };
 		EE12CFC92D97A629003A4E70 /* KJPhotoSectionHeader.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KJPhotoSectionHeader.h; sourceTree = "<group>"; };
@@ -316,6 +324,7 @@
 				873B8AEA1B1F5CCA007FD442 /* Main.storyboard */,
 				04D64DD12D11B61000C3A0F6 /* Helper */,
 				71719F9D1E33DC2100824A3D /* LaunchScreen.storyboard */,
+				EE0A5B5C2DAF9DAF00E6FAE9 /* NBLaunchScreen.storyboard */,
 				6003F5A8195388D20070C39A /* Images.xcassets */,
 				6003F594195388D20070C39A /* Supporting Files */,
 			);
@@ -356,6 +365,9 @@
 		60FF7A9C1954A5C5007DD14C /* Podspec Metadata */ = {
 			isa = PBXGroup;
 			children = (
+				EE0A5B5E2DAFA08D00E6FAE9 /* AAAA_1.png */,
+				EE0A5B602DAFA0C400E6FAE9 /* AAAA_1@2x.png */,
+				EE0A5B612DAFA0C400E6FAE9 /* AAAA_1@3x.png */,
 				F14A434A891FAF45E9307CC0 /* QingLi.podspec */,
 				42A74C4BA1E6140F9AC643CA /* README.md */,
 				411C11A094F3945977D80676 /* LICENSE */,
@@ -471,8 +483,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EE0A5B5D2DAF9DAF00E6FAE9 /* NBLaunchScreen.storyboard in Resources */,
+				EE0A5B622DAFA0C400E6FAE9 /* AAAA_1@2x.png in Resources */,
+				EE0A5B632DAFA0C400E6FAE9 /* AAAA_1@3x.png in Resources */,
 				873B8AEB1B1F5CCA007FD442 /* Main.storyboard in Resources */,
 				71719F9F1E33DC2100824A3D /* LaunchScreen.storyboard in Resources */,
+				EE0A5B5F2DAFA08D00E6FAE9 /* AAAA_1.png in Resources */,
 				6003F5A9195388D20070C39A /* Images.xcassets in Resources */,
 				6003F598195388D20070C39A /* InfoPlist.strings in Resources */,
 			);
@@ -732,7 +748,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QingLi/QingLi-Prefix.pch";
 				INFOPLIST_FILE = "QingLi/QingLi-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = QingLi;
+				INFOPLIST_KEY_CFBundleDisplayName = "Clean Up";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				MODULE_NAME = ExampleApp;
 				OTHER_LDFLAGS = (
@@ -802,7 +818,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "QingLi/QingLi-Prefix.pch";
 				INFOPLIST_FILE = "QingLi/QingLi-Info.plist";
-				INFOPLIST_KEY_CFBundleDisplayName = QingLi;
+				INFOPLIST_KEY_CFBundleDisplayName = "Clean Up";
 				IPHONEOS_DEPLOYMENT_TARGET = 13;
 				MODULE_NAME = ExampleApp;
 				OTHER_LDFLAGS = (
