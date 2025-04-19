@@ -1,6 +1,7 @@
 #import "KJAllContactsViewController.h"
 #import <Contacts/Contacts.h>
 #import <ContactsUI/ContactsUI.h>
+#import "KJContactCell.h"
 
 @interface KJAllContactsViewController () <UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate>
 @property (nonatomic, strong) UITableView *tableView;
@@ -35,7 +36,7 @@
     self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, top, self.view.frame.size.width, self.view.frame.size.height - 56 - top) style:UITableViewStylePlain];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:@"contactCell"];
+    [self.tableView registerClass:[KJContactCell class] forCellReuseIdentifier:@"contactCell"];
     [self.view addSubview:self.tableView];
     
     // Delete button
@@ -86,69 +87,46 @@
 
 #pragma mark - UITableViewDataSource
 
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return 66;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     return self.filteredContacts.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"contactCell" forIndexPath:indexPath];
+    KJContactCell *cell = [tableView dequeueReusableCellWithIdentifier:@"contactCell" forIndexPath:indexPath];
     CNContact *contact = self.filteredContacts[indexPath.row];
-    
-    // 头像
+        
+    // 设置头像
     if (contact.thumbnailImageData) {
-        cell.imageView.image = [UIImage imageWithData:contact.thumbnailImageData];
+        cell.avatarImageView.image = [UIImage imageWithData:contact.thumbnailImageData];
     } else {
-        cell.imageView.image = [UIImage systemImageNamed:@"person.crop.circle"];
+        cell.avatarImageView.image = [UIImage systemImageNamed:@"person.circle.fill"];
+        cell.avatarImageView.tintColor = [UIColor systemBlueColor];
     }
     
-    // 姓名和电话号码
-    NSString *name = [NSString stringWithFormat:@"%@%@", contact.familyName, contact.givenName];
-    NSString *phoneNumber = @"No phone number";
+    // 设置名称
+    NSString *name = [NSString stringWithFormat:@"%@%@", contact.givenName ? [NSString stringWithFormat:@"%@ ", contact.givenName] : @"", contact.familyName];
+    if (name.length == 0) {
+        name = @"Unknown contact";
+    }
+    cell.nameLabel.text = name;
+    
+    // 设置电话
     if (contact.phoneNumbers.count > 0) {
-        CNPhoneNumber *phone = contact.phoneNumbers.firstObject.value;
-        phoneNumber = phone.stringValue;
+        CNLabeledValue<CNPhoneNumber *> *phoneNumber = contact.phoneNumbers.firstObject;
+        cell.phoneLabel.text = [phoneNumber.value stringValue];
+    } else {
+        cell.phoneLabel.text = @"No phone number";
     }
-    
-    // 使用多行显示
-    cell.textLabel.numberOfLines = 0;
-    cell.detailTextLabel.numberOfLines = 0;
-    
-    // 创建属性字符串来组合姓名和电话
-    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc] init];
-    
-    // 添加姓名（粗体）
-    NSAttributedString *nameAttr = [[NSAttributedString alloc] initWithString:name attributes:@{
-        NSFontAttributeName: [UIFont boldSystemFontOfSize:17]
-    }];
-    [attributedText appendAttributedString:nameAttr];
-    
-    // 添加换行和电话号码
-    if (phoneNumber.length > 0) {
-        NSAttributedString *newline = [[NSAttributedString alloc] initWithString:@"\n"];
-        NSAttributedString *phoneAttr = [[NSAttributedString alloc] initWithString:phoneNumber attributes:@{
-            NSFontAttributeName: [UIFont systemFontOfSize:14],
-            NSForegroundColorAttributeName: [UIColor grayColor]
-        }];
-        [attributedText appendAttributedString:newline];
-        [attributedText appendAttributedString:phoneAttr];
-    }
-    
-    cell.textLabel.attributedText = attributedText;
-    
-    // 自定义选择框
-    UIButton *checkBox = [UIButton buttonWithType:UIButtonTypeCustom];
-    checkBox.frame = CGRectMake(0, 0, 24, 24);
-    checkBox.userInteractionEnabled = NO; // 让cell的点击事件优先处理
     
     if ([self.selectedContacts containsObject:contact.identifier]) {
-        [checkBox setImage:[UIImage systemImageNamed:@"checkmark.square.fill"] forState:UIControlStateNormal];
-        checkBox.tintColor = [UIColor systemBlueColor];
+        [cell setIsSelected:YES];
     } else {
-        [checkBox setImage:[UIImage systemImageNamed:@"square"] forState:UIControlStateNormal];
-        checkBox.tintColor = [UIColor lightGrayColor];
+        [cell setIsSelected:NO];
     }
-    
-    cell.accessoryView = checkBox;
     
     return cell;
 }
