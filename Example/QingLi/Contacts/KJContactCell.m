@@ -58,6 +58,15 @@
             make.height.mas_equalTo(17);
         }];
         
+        UIView *line = [[UIView alloc] initWithFrame:CGRectZero];
+        line.backgroundColor = [UIColor qmui_colorWithHexString:@"#EEEEEE"];
+        [self.contentView addSubview:line];
+        [line mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(14);
+            make.right.mas_equalTo(-14);
+            make.height.mas_equalTo(0.5);
+            make.bottom.mas_equalTo(self.contentView.mas_bottom);
+        }];
 
     }
     return self;

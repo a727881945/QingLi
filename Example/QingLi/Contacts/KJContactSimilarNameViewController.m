@@ -61,9 +61,9 @@
     self.tableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
-    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+//    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
     self.tableView.backgroundColor = [UIColor systemGroupedBackgroundColor];
-    self.tableView.sectionHeaderHeight = 40;
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     [self.view addSubview:self.tableView];
     
     // 注册cell
@@ -161,11 +161,12 @@
             cell.avatarImageView.image = [UIImage imageWithData:contact.thumbnailImageData];
         } else {
             cell.avatarImageView.image = [UIImage systemImageNamed:@"person.circle.fill"];
-            cell.avatarImageView.tintColor = [UIColor systemBlueColor];
+            cell.avatarImageView.tintColor = [UIColor systemGrayColor];
         }
         
         // 设置名称
-        NSString *name = [NSString stringWithFormat:@"%@ %@", contact.givenName, contact.familyName];
+        NSString *givenName = contact.givenName;
+        NSString *name = [NSString stringWithFormat:@"%@%@%@", givenName ?: @"", givenName.length > 0 ? @" " : @"", contact.familyName];
         if (name.length == 0) {
             name = @"Unknown Contact";
         }
@@ -179,7 +180,10 @@
         
         // 设置合并按钮
         [cell.mergeButton addTarget:self action:@selector(mergeButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
-        cell.mergeButton.tag = indexPath.section;
+        cell.mergeButton.tag = indexPath.section + 200;
+        
+        [cell.selectAllButton addTarget:self action:@selector(selectAllInSectionTapped:) forControlEvents:UIControlEventTouchUpInside];
+        cell.selectAllButton.tag = indexPath.section + 200;
         
         return cell;
     } else {
@@ -217,19 +221,28 @@
     }
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
-    KJSectionHeaderView *headerView = [[KJSectionHeaderView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 40)];
-    [headerView.selectAllButton addTarget:self action:@selector(selectAllInSectionTapped:) forControlEvents:UIControlEventTouchUpInside];
-    headerView.selectAllButton.tag = section;
-    return headerView;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
-    return indexPath.row == 0 ? 70 : 60;
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section {
+    return 0.01;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
-    return 40;
+    return 0.01;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section {
+    UIView *view = [UIView new];
+    view.backgroundColor = UIColor.clearColor;
+    return view;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section {
+    UIView *view = [UIView new];
+    view.backgroundColor = UIColor.clearColor;
+    return view;
+}
+
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath {
+    return indexPath.row == 0 ? 136 : 66;
 }
 
 #pragma mark - UITableViewDelegate
@@ -333,7 +346,7 @@
 }
 
 - (void)selectAllInSectionTapped:(UIButton *)button {
-    NSInteger section = button.tag;
+    NSInteger section = button.tag - 200;
     NSArray *group = self.similarNameGroups[section];
     NSString *key = [NSString stringWithFormat:@"%ld", (long)section];
     NSMutableSet *selectedInSection = self.selectedContacts[key];
@@ -364,7 +377,7 @@
 }
 
 - (void)mergeButtonTapped:(UIButton *)button {
-    NSInteger section = button.tag;
+    NSInteger section = button.tag - 200;
     NSString *key = [NSString stringWithFormat:@"%ld", (long)section];
     NSMutableSet *selectedInSection = self.selectedContacts[key];
     

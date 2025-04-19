@@ -38,6 +38,7 @@
     self.tableView.dataSource = self;
     [self.tableView registerClass:[KJContactCell class] forCellReuseIdentifier:@"contactCell"];
     [self.view addSubview:self.tableView];
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     // Delete button
     self.deleteButton = [UIButton buttonWithType:UIButtonTypeSystem];
