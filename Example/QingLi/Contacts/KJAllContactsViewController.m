@@ -33,7 +33,7 @@
     [self.view addSubview:self.searchBar];
     top += 56;
     // Table view
-    self.tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, top, self.view.frame.size.width, self.view.frame.size.height - 56 - top) style:UITableViewStylePlain];
+    self.tableView = [[UITableView alloc] initWithFrame:CGRectZero style:UITableViewStylePlain];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
     [self.tableView registerClass:[KJContactCell class] forCellReuseIdentifier:@"contactCell"];
@@ -41,13 +41,40 @@
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     
     // Delete button
-    self.deleteButton = [UIButton buttonWithType:UIButtonTypeSystem];
-    self.deleteButton.frame = CGRectMake(0, self.view.frame.size.height - 60, self.view.frame.size.width, 60);
-    [self.deleteButton setTitle:@"Delete selected contacts" forState:UIControlStateNormal];
-    [self.deleteButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-    self.deleteButton.backgroundColor = [UIColor systemRedColor];
-    [self.deleteButton addTarget:self action:@selector(deleteSelectedContacts) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:self.deleteButton];
+    {
+        QMUIButton *deleteButton = [QMUIButton buttonWithType:UIButtonTypeCustom];
+        
+        CAGradientLayer *gradient = [CAGradientLayer layer];
+        gradient.colors = @[
+            (id)[UIColor qmui_colorWithHexString:@"#3BE2F4"].CGColor,
+            (id)[UIColor qmui_colorWithHexString:@"##28A8FF"].CGColor,
+        ];
+        gradient.frame = CGRectMake(0, 0, self.view.bounds.size.width - 94, 38);
+        gradient.locations = @[@0, @1.0];
+        gradient.startPoint = CGPointMake(0, 0.5);
+        gradient.endPoint = CGPointMake(1, 0.5);
+        [deleteButton.layer addSublayer:gradient];
+        deleteButton.layer.cornerRadius = 19;
+        deleteButton.layer.masksToBounds = YES;
+        [self.view addSubview:deleteButton];
+        [deleteButton mas_makeConstraints:^(MASConstraintMaker *make) {
+            make.left.mas_equalTo(47);
+            make.right.mas_equalTo(-47);
+            make.height.mas_equalTo(38);
+            make.bottom.mas_equalTo(0).mas_offset(-SafeAreaInsetsConstantForDeviceWithNotch.bottom);
+        }];
+        self.deleteButton = deleteButton;
+        [self.deleteButton setTitle:@"Delete selected contacts" forState:UIControlStateNormal];
+        [self.deleteButton setTitleColor:[UIColor qmui_colorWithHexString:@"#FFFFFF"] forState:UIControlStateNormal];
+        [self.deleteButton addTarget:self action:@selector(deleteSelectedContacts) forControlEvents:UIControlEventTouchUpInside];
+
+    }
+    
+    [self.tableView mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.top.mas_equalTo(self.searchBar.mas_bottom);
+        make.bottom.mas_equalTo(self.deleteButton.mas_top).mas_offset(-23);
+        make.left.right.mas_equalTo(0);
+    }];
     
     // Initialize data
     self.contacts = [NSMutableArray array];
@@ -129,8 +156,18 @@
         [cell setIsSelected:NO];
     }
     
+    // 设置选择按钮点击事件
+    [cell.checkButton addTarget:self action:@selector(checkButtonTapped:) forControlEvents:UIControlEventTouchUpInside];
+    cell.checkButton.tag = indexPath.row + 200; // 使用tag存储位置信息
+    
     return cell;
 }
+
+- (void)checkButtonTapped:(UIButton *)checkButton {
+    NSInteger row = checkButton.tag - 200;
+    [self tableView:self.tableView didSelectRowAtIndexPath:[NSIndexPath indexPathForRow:row inSection:0]];
+}
+
 
 #pragma mark - UITableViewDelegate
 
